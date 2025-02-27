@@ -1,11 +1,16 @@
 import express, { Request, Response } from "express";
 import pool from "./config/db";
+import initiateRoutes from "./routes/routes";
 
 const app = express();
 
 
 // middleware
 app.use(express.json());
+
+// route
+
+initiateRoutes(app);
 
 // Example route to fetch data from the database
 app.get("/data", async (req: Request, res: Response) => {
