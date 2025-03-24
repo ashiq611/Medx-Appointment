@@ -4,7 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 
 const router = Router();
 
-// Fix the paths by adding a `/` before the routes
+
 router.post('/register', expressAsyncHandler(authController.register));
 router.post('/login', expressAsyncHandler(authController.login));
 

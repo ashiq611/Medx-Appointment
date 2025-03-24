@@ -17,14 +17,13 @@ class AuthService {
 
             if (!RoleNames.includes(role)) {
                 return {
-                  success: false,
+
                   message: "Invalid role",
                 };
               }
 
             if(!username || !password){
                 return {
-                    success: false,
                     message: "All fields are required"
                 }
             }
@@ -55,7 +54,6 @@ class AuthService {
     
             if (!username || !password) {
                 return {
-                    success: false,
                     message: "All fields are required"
                 };
             }
@@ -64,7 +62,6 @@ class AuthService {
     
             if (!user) {
                 return {
-                    success: false,
                     message: "Invalid username or password"
                 };
             }
@@ -73,13 +70,11 @@ class AuthService {
             const token = jwt.sign({ id: user.userid, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
     
             return {
-                success: true,
                 token
             };
         } catch (err) {
             console.log(err);
             return {
-                success: false,
                 message: "An error occurred"
             };
         } finally {

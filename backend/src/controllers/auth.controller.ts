@@ -23,6 +23,9 @@ class AuthController {
       }
    }
    login: RequestHandler = async(req: Request, res : Response) => {
+      // if (req.user.id !== req.params.id) {
+      //    return res.status(403).json({ message: "Forbidden: Access denied" });
+      //  }
      try{
         const user = await authService.login(req.body)
         res.status(200).json({
