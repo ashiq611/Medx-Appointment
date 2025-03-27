@@ -12,7 +12,8 @@ const verifyToken = (req: any, res: any, next: any) => {
           }
           try{
             const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-            if (!decoded || !(decoded as jwt.JwtPayload).userId) {
+            console.log(decoded, "decoded")
+            if (!decoded || !(decoded as jwt.JwtPayload).id) {
               return res.status(403).json({ message: "Token payload is invalid" });
             }
             req.user = decoded;
