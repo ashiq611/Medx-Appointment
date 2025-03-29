@@ -13,9 +13,12 @@ class UserService {
     // getSchedule
     const getSchedule = await doctorRepo.getDoctorSchedule(client, doctorId);
 
+    // console.log(getSchedule)
+
 
     // availibitly doctor
     const dayofDate = getDayFromDate(date);
+    // console.log(dayofDate, "dayofDate")
     if(dayofDate !== getSchedule.day){
       isAvailable = false;
     }else{
@@ -29,7 +32,7 @@ class UserService {
     }
 
     // Create user
-    const result = await userRepo.createAppointment(client,user);
+    const result = await userRepo.createAppointment(client, { ...user, ScheduleID: getSchedule.scheduleid });
     return result;
   }
 }

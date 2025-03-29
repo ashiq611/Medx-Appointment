@@ -25,11 +25,11 @@ class DoctorRepo {
     async getDoctorSchedule(client: any, doctorId: any) {
         try {
             const query = {
-                text: "SELECT * FROM public.\"Appointment\" WHERE DoctorID = $1",
+                text: "SELECT * FROM schedule WHERE DoctorID = $1",
                 values: [doctorId],
             };
             const responseData = await client.query(query);
-            return responseData.rows;
+            return responseData.rows[0];
         } catch (err) {
             console.log(err);
         }
