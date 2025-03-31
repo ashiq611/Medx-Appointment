@@ -29,6 +29,48 @@ class DoctorRepo {
                 values: [doctorId],
             };
             const responseData = await client.query(query);
+            return responseData.rows;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getBranchWiseDoctor(client: any, branchid: any) {
+        try {
+            const query = {
+                text: `
+                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, d.departmentname, hi.hospitalname, h.branchname
+                    FROM Doctor 
+                    JOIN HospitalBranch h ON Doctor.HospitalBranchID = h.HospitalBranchID
+                    JOIN Hospital_Institute hi ON h.HospitalID = hi.HospitalID
+                    JOIN Specialty s ON Doctor.specialtyid = s.specialtyid
+                    JOIN Department d ON Doctor.DepartmentID = d.DepartmentID
+                    WHERE h.HospitalBranchID = $1
+                `,
+                values: [branchid],
+            };
+            const responseData = await client.query(query);
+            return responseData.rows;
+        } catch (err) {
+            console.error('getBranchWiseDoctor error:', err);
+            throw err;
+        }
+    }
+
+    async getDoctorDetails(client: any, doctorid: any) {
+        try {
+            const query = {
+                text: `
+                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, d.departmentname, hi.hospitalname, h.branchname
+                    FROM Doctor 
+                    JOIN HospitalBranch h ON Doctor.HospitalBranchID = h.HospitalBranchID
+                    JOIN Hospital_Institute hi ON h.HospitalID = hi.HospitalID
+                    JOIN Specialty s ON Doctor.specialtyid = s.specialtyid
+                    JOIN Department d ON Doctor.DepartmentID = d.DepartmentID
+                    WHERE doctorid = $1;`,
+                values: [doctorid],
+            };
+            const responseData = await client.query(query);
             return responseData.rows[0];
         } catch (err) {
             console.log(err);

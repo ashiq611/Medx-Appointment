@@ -43,4 +43,12 @@ router.get('/patient',verifyToken, expressAsyncHandler((req, res) => {
 
 router.post('/appointment', expressAsyncHandler(userController.createAppointment));
 
+router.get('/schedule/:doctorid', expressAsyncHandler(userController.getSchedule));
+
+router.get('/get-all-hospital', expressAsyncHandler(userController.getBranch));
+
+router.get('/get-branch-wise-doctor/:branchid', expressAsyncHandler(userController.getBranchWiseDoctor));
+
+router.get('/doctor-details/:doctorid', expressAsyncHandler(userController.getDoctorDetails));
+
 export default router;

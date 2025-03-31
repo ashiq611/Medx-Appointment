@@ -5,11 +5,11 @@ class UserRopo {
 const {patientId, doctorId, date,ReceptionistID, HospitalBranchID,ScheduleID} = user;
 
         const query = {
-            text: `INSERT INTO Appointment (AppointmentDate, Status, PatientID, DoctorID, ReceptionistID, HospitalBranchID,ScheduleId) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            text: `INSERT INTO Appointment (AppointmentDate, Status, PatientID, DoctorID, ReceptionistID, HospitalBranchID,ScheduleId) VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING *;`,
             values: [date, 'Scheduled', patientId, doctorId, ReceptionistID, HospitalBranchID,ScheduleID],
         };
       const result = await client.query(query);
-      return result;
+      return result.rows[0];
     } catch (err) {
       console.log(err);
     }
