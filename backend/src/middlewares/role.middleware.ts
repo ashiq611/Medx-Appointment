@@ -13,7 +13,7 @@ const authorizeRoles = (...allowedRoles: string[]) => {
       return; // 🚨 Important: return here to avoid falling through
     }
 
-    next(); // only call next if authorized
+    next();
   };
 };
 

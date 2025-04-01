@@ -5,11 +5,6 @@ import userRoute from './user.route'
 
 const initiateRoutes = (app: Express) => {
     const apiV1Initials = '/api/v1'
-    const factoringFinance = '/factoring-finance'
-    const distributorFinance = '/distributor-finance'
-    const reverseFactoring = '/reverse-factoring'
-    const workOrderFinance = '/work-order-finance'
-    const settings = '/settings'
 
     
 
