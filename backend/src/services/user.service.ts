@@ -89,6 +89,15 @@ class UserService {
       console.log(err);
     }
   }
+  async getAllSchedules(doctorid: any) {
+    try {
+      const client = await pool.connect();
+      const result = await doctorRepo.getDoctorSchedule(client, doctorid);
+      return result;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 export default new UserService();

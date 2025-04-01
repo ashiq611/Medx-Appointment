@@ -78,6 +78,23 @@ class UserController {
         }
     }
 
+    getAllSchedules: RequestHandler = async (req,res) => {
+        const { doctorid } = req.params;
+        try {
+            const result = await userService.getAllSchedules(doctorid)
+            res.status(201).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
 
 }
 

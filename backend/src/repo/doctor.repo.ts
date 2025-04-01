@@ -22,16 +22,24 @@ class DoctorRepo {
     //         console.log(err);
     //     }
     // }
-    async getDoctorSchedule(client: any, doctorId: any) {
+    async getDoctorSchedule(client: any, doctorId?: any) {
+        let queryText: string;
+        let values: any[] = [];
+    
         try {
-            const query = {
-                text: "SELECT * FROM schedule WHERE DoctorID = $1",
-                values: [doctorId],
-            };
-            const responseData = await client.query(query);
-            return responseData.rows;
+            if (doctorId) {
+                queryText = "SELECT * FROM schedule WHERE DoctorID = $1";
+                values = [doctorId];
+            } else {
+                queryText = "SELECT * FROM schedule";
+                values = []; // No values needed when fetching all
+            }
+    
+            const result = await client.query(queryText, values);
+            return result.rows;
         } catch (err) {
-            console.log(err);
+            console.error("Error fetching doctor schedule:", err);
+            throw err; // Rethrow the error for upstream handling
         }
     }
 
