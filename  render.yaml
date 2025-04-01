@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: medx-appointment-backend
+    env: node
+    rootDir: backend  # Points to /backend where package.json and server.js are
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: SERVER_PORT
+        value: 3006  # Optional; Render overrides with process.env.PORT
+      - key: DB_HOST
+        value: aws-0-ap-southeast-1.pooler.supabase.com
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        value: postgres.fynawjublytletduqqez
+      - key: DB_PASSWORD
+        value: "@Shiq1102"  # Enclosed in quotes due to special character
+      - key: JWT_SECRET
+        value: asdsdsdfed
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
