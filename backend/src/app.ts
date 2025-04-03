@@ -1,9 +1,9 @@
-import express, { Request, Response } from "express";
-import pool from "./config/db";
+import express from "express";
 import initiateRoutes from "./routes/routes";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
+import "./config/passportConfiq";
 
 const app = express();
 
@@ -33,6 +33,15 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// handle error
+// app.use((err: any, req: any, res: any, next: any) => {
+//   console.log(err);
+//   return res.status(500).json({
+//     success: false,
+//     message: "Internal Server Error",
+//   });
+// });
 
 // route
 

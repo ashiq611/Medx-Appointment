@@ -19,7 +19,7 @@ class AuthRepo {
      login = async (client:any,user:any) => {
         try{
             const query = {
-                text: 'SELECT id, password, role FROM public."User" WHERE phone_number = $1',
+                text: 'SELECT id, password, role, is_mfa_active FROM public."User" WHERE phone_number = $1',
                 values: [user.phone_number],
             };
          const responseData = await client.query(query);
@@ -41,6 +41,18 @@ class AuthRepo {
             const query = {
                 text: 'SELECT userid, password, role FROM public."User" WHERE phone_number = $1',
                 values: [phone_number],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     getUserbyID = async (client:any,userid:any) => {
+        try{
+            const query = {
+                text: 'SELECT * FROM public."User" WHERE id = $1',
+                values: [userid],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];

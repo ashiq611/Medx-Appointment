@@ -86,10 +86,13 @@ class AuthService {
             }
     
             // Create the JWT token after successful login
-            const token = jwt.sign({ id: user.userid, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
     
             return {
-                token
+                id: user.id,
+                name: user.name,
+                role: user.role,
+                is_mfa_active: user.is_mfa_active,
             };
         } catch (err) {
             console.log(err);
