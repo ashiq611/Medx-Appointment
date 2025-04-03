@@ -27,7 +27,7 @@ class AuthController {
       //    return res.status(403).json({ message: "Forbidden: Access denied" });
       //  }
      try{
-        const user = await authService.login(req.body)
+        const user = await authService.login(req)
         res.status(200).json({
             success: true,
             data: user

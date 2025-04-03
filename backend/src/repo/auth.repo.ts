@@ -17,19 +17,16 @@ class AuthRepo {
          
      }
      login = async (client:any,user:any) => {
+        const {phone_number} = user
+        // console.log(phone_number, "repo-ph")
         try{
             const query = {
                 text: 'SELECT id, password, role, is_mfa_active FROM public."User" WHERE phone_number = $1',
-                values: [user.phone_number],
+                values: [phone_number],
             };
          const responseData = await client.query(query);
      
           const dbUser = responseData.rows[0];
-
-         // If user does not exist or passwords do not match
-         if (!dbUser || !bcrypt.compareSync(user.password, dbUser.password)) {
-             return null; // Invalid username or password
-         }
 
          return dbUser;
      }catch(err){

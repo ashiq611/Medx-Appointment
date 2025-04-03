@@ -66,34 +66,43 @@ class AuthService {
        
         
     }
-    login = async (body: any) => {
+    login = async (req: any) => {
         const client = await pool.connect();
         try {
-            const { phone_number, password } = body;
+            // const { phone_number, password } = body;
     
-            if (!phone_number || !password) {
-                return {
-                    message: "All fields are required"
-                };
-            }
+            // if (!phone_number || !password) {
+            //     return {
+            //         message: "All fields are required"
+            //     };
+            // }
     
-            const user = await AuthRepo.login(client, { phone_number, password });
+            // const user = await AuthRepo.login(client, { phone_number, password });
     
-            if (!user) {
-                return {
-                    message: "Invalid username or password"
-                };
-            }
+            // if (!user) {
+            //     return {
+            //         message: "Invalid username or password"
+            //     };
+            // }
     
-            // Create the JWT token after successful login
-            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+            // // Create the JWT token after successful login
+            // const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
     
+            // return {
+            //     message: "Login successful",
+            //     id: user.id,
+            //     name: user.name,
+            //     role: user.role,
+            //     is_mfa_active: user.is_mfa_active,
+            // };
+            
+
             return {
-                id: user.id,
-                name: user.name,
-                role: user.role,
-                is_mfa_active: user.is_mfa_active,
-            };
+                message: "Login successful",
+                id: req.user.id,
+                role: req.user.role,
+                is_mfa_active: req.user.is_mfa_active
+            }
         } catch (err) {
             console.log(err);
             return {

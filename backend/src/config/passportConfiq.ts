@@ -14,7 +14,13 @@ passport.use(
         async (phone_number, password, done) => {
             try {
                 const client = await pool.connect();
-                const user = await authRepo.login(client, { phone_number, password });
+                const user = await authRepo.login(client, { phone_number });
+
+                if (!user) {
+                    console.log("User not found:", phone_number);
+                    return done(null, false, { message: "Invalid phone number or password" });
+                }
+                // console.log(user,"passport user")
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (isMatch) {
                     return done(null, user);
@@ -31,15 +37,15 @@ passport.use(
 );
 
 passport.serializeUser((user:any, done) => {
-    console.log("we are serializing user");
+    console.log("we are serializing user", user);
     done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
     try {
-        console.log("we are deserializing user");
         const client = await pool.connect();
         const user = await authRepo.getUserbyID(client, id);
+        console.log("we are deserializing user",user);
         done(null, user);
     } catch (error) {
         done(error);
