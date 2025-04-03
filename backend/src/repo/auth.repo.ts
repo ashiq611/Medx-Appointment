@@ -4,8 +4,8 @@ class AuthRepo {
     register = async (client:any,user:any) => {
         try{
          const query = {
-             text: "INSERT INTO public.\"User\" (login_slug, password, role, phone_number) VALUES ($1, $2, $3, $4) RETURNING *;",
-             values: [user.login_slug, user.password, user.role, user.phone_number],
+             text: "INSERT INTO public.\"User\" (login_slug, password, role, phone_number, patient_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+             values: [user.login_slug, user.password, user.role, user.phone_number, user.patientid],
          };
      
          const responseData = await client.query(query);

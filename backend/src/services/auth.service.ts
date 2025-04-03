@@ -4,6 +4,7 @@ import AuthRepo from "../repo/auth.repo";
 import pool from "../config/db";
 import { RoleNames } from "../utils/RoleNames";
 import jwt from "jsonwebtoken"
+import userRepo from "../repo/user.repo";
 
 
 
@@ -13,7 +14,8 @@ class AuthService {
     register = async (body:any) => {
         const client = await pool.connect();
         try{
-            const { password, role, phone_number} = body;
+            const { name,password, phone_number} = body;
+            const role = "Patient"
 
             // check exist user by contact number
             const isExistUser = await AuthRepo.checkExistUser(client, phone_number);
@@ -42,13 +44,18 @@ class AuthService {
             const hashedPassword = bcrypt.hashSync(password, 10);
         
             const newUser = {
+                name,
                 login_slug,
                 password: hashedPassword,
                 role,
                 phone_number
             }
+
+           const patient=  await userRepo.createPatient(client,newUser);
+           const patientid = patient?.patientid;
+           console.log(patientid, "patientid")
     
-            await AuthRepo.register(client,newUser);
+            await AuthRepo.register(client,{ ...newUser, patientid });
         
     
         }catch(err){

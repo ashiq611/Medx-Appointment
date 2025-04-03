@@ -16,6 +16,20 @@ const {patientId, doctorId, date,ReceptionistID, HospitalBranchID,ScheduleID} = 
 
     
   }
+  async createPatient(client: any,user: any) {
+    try { 
+
+        const query = {
+            text: `INSERT INTO Patient (name, contactinformation) VALUES ($1, $2)  RETURNING patientid;`,
+            values: [user.name, user.phone_number],
+        };  
+      const result = await client.query(query);
+      return result.rows[0];  
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
   
 }
 

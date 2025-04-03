@@ -1,31 +1,43 @@
 import express, { Request, Response } from "express";
 import pool from "./config/db";
 import initiateRoutes from "./routes/routes";
+import cors from "cors";
+import session from "express-session";
+import passport from "passport";
 
 const app = express();
 
 
 // middleware
-app.use(express.json());
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
+const corsoptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+}
+
+app.use(cors(corsoptions));
+
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+       maxAge: 6000 * 60,
+    }
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // route
 
 initiateRoutes(app);
 
-// Example route to fetch data from the database
-app.get("/data", async (req: Request, res: Response) => {
-    try {
-      const result = await pool.query('SELECT * FROM public."User"');
-      res.json(result.rows); // Send the rows as JSON response
-    } catch (error) {
-      console.error("Database error:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  });
 
-// Define a basic route
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, Express with TypeScript!");
-});
 
 export default app;
