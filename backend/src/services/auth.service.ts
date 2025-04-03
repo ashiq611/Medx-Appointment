@@ -13,7 +13,19 @@ class AuthService {
     register = async (body:any) => {
         const client = await pool.connect();
         try{
-            const {username, password, role, contactNumber} = body;
+            const { password, role, phone_number} = body;
+
+            // check exist user by contact number
+            const isExistUser = await AuthRepo.checkExistUser(client, phone_number);
+
+            if (isExistUser) {
+                return {
+                  message: "User already exists",
+                };
+              }
+
+            // generate username
+            const login_slug = `user_${Date.now()}`;
 
             if (!RoleNames.includes(role)) {
                 return {
@@ -22,7 +34,7 @@ class AuthService {
                 };
               }
 
-            if(!username || !password){
+            if(!phone_number || !password){
                 return {
                     message: "All fields are required"
                 }
@@ -30,10 +42,10 @@ class AuthService {
             const hashedPassword = bcrypt.hashSync(password, 10);
         
             const newUser = {
-                username,
+                login_slug,
                 password: hashedPassword,
                 role,
-                contactinformation: contactNumber
+                phone_number
             }
     
             await AuthRepo.register(client,newUser);
@@ -50,15 +62,15 @@ class AuthService {
     login = async (body: any) => {
         const client = await pool.connect();
         try {
-            const { username, password } = body;
+            const { phone_number, password } = body;
     
-            if (!username || !password) {
+            if (!phone_number || !password) {
                 return {
                     message: "All fields are required"
                 };
             }
     
-            const user = await AuthRepo.login(client, { username, password });
+            const user = await AuthRepo.login(client, { phone_number, password });
     
             if (!user) {
                 return {

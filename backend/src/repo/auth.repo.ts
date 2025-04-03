@@ -4,8 +4,8 @@ class AuthRepo {
     register = async (client:any,user:any) => {
         try{
          const query = {
-             text: "INSERT INTO public.\"User\" (username, password, role) VALUES ($1, $2, $3)",
-             values: [user.username, user.password, user.role],
+             text: "INSERT INTO public.\"User\" (login_slug, password, role, phone_number) VALUES ($1, $2, $3, $4) RETURNING *;",
+             values: [user.login_slug, user.password, user.role, user.phone_number],
          };
      
          const responseData = await client.query(query);
@@ -19,8 +19,8 @@ class AuthRepo {
      login = async (client:any,user:any) => {
         try{
             const query = {
-                text: 'SELECT userid, password, role FROM public."User" WHERE username = $1',
-                values: [user.username],
+                text: 'SELECT id, password, role FROM public."User" WHERE phone_number = $1',
+                values: [user.phone_number],
             };
          const responseData = await client.query(query);
      
@@ -32,6 +32,18 @@ class AuthRepo {
          }
 
          return dbUser;
+     }catch(err){
+         console.log(err)
+     }
+     }
+     checkExistUser = async (client:any,phone_number:any) => {
+        try{
+            const query = {
+                text: 'SELECT userid, password, role FROM public."User" WHERE phone_number = $1',
+                values: [phone_number],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
      }catch(err){
          console.log(err)
      }
