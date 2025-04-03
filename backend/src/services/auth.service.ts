@@ -5,6 +5,8 @@ import pool from "../config/db";
 import { RoleNames } from "../utils/RoleNames";
 import jwt from "jsonwebtoken"
 import userRepo from "../repo/user.repo";
+import speakeasy from 'speakeasy'
+import qrCode from 'qrcode'
 
 
 
@@ -95,6 +97,12 @@ class AuthService {
             //     role: user.role,
             //     is_mfa_active: user.is_mfa_active,
             // };
+
+            if(!req.user){
+                return {
+                    message: "Unauthorized user"
+                };
+            }
             
 
             return {
@@ -111,6 +119,66 @@ class AuthService {
         } finally {
             client.release();
         }
+    };
+    status = async (req: any) => {
+        if (!req.user) {
+            return {
+                message: "Unauthorized user"
+            };
+        }
+        return {
+            message: "User is authenticated",
+            id: req.user.id,
+            role: req.user.role,
+            is_mfa_active: req.user.is_mfa_active
+        };
+    }
+    setup2fa = async (req: any) => {
+        try{
+            const client = await pool.connect();
+            console.log("the req user is",req.user)
+            const user = req.user;
+            var secret = speakeasy.generateSecret();
+            // update the twoFactorSecrect in db
+            await AuthRepo.update2faSecret(client,{id:user.id, secret:secret.base32, is_mfa_active:true});
+            const url = speakeasy.otpauthURL({
+                secret: secret.base32,
+                label: `${req.user.id}`,
+                issuer: "Medx",
+                encoding: "base32"
+            })
+            const qrImageUrl = await qrCode.toDataURL(url);
+            return {
+                message: "2FA setup successful",
+                secret: secret.base32,
+                qrImageUrl
+
+            }
+
+        }catch(err){
+            console.log(err)
+            return {
+                message: "An error occurred"
+            }
+        }
+    }
+    logout = async (req: any) => {
+        if (!req.user) {
+            return {
+                message: "Unauthorized user"
+            };
+        }
+        req.logout((error: any) => { 
+            if (error) {
+                console.log(error);
+                return {
+                    message: "User not logged in" 
+                };
+            }
+            return {
+                message: "Logout successful"
+            };
+        });
     };
 }
 

@@ -40,6 +40,51 @@ class AuthController {
         })
      }
   }
+  status: RequestHandler = async(req: Request, res : Response) => {
+     try{
+        const user = await authService.status(req)
+        res.status(200).json({
+            success: true,
+            data: user
+        })
+     }catch(err){
+        console.log(err)
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        })
+     }
+  }
+  setup2fa: RequestHandler = async(req: Request, res : Response) => {
+     try{
+        const user = await authService.setup2fa(req)
+        res.status(200).json({
+            success: true,
+            data: user
+        })
+     }catch(err){
+        console.log(err)
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        })
+     }
+  }
+  logout: RequestHandler = async(req: Request, res : Response) => {
+     try{
+        const message = await authService.logout(req)
+        res.status(200).json({
+            success: true,
+            data: message
+        })
+     }catch(err){
+        console.log(err)
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        })
+     }
+  }
 
 }
 

@@ -57,6 +57,18 @@ class AuthRepo {
          console.log(err)
      }
      }
+     update2faSecret = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'UPDATE public."User" SET two_factor_secret = $1, is_mfa_active = $2 WHERE id = $3',
+                values: [data.secret,data.is_mfa_active,data.id],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
 }
 
 
