@@ -4,6 +4,7 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import "./config/passportConfiq";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 
@@ -23,16 +24,20 @@ const corsoptions = {
 app.use(cors(corsoptions));
 
 app.use(session({
-    secret: 'secret',
+    secret: process.env.JWT_SECRET!,
     resave: false,
     saveUninitialized: false,
     cookie: {
-       maxAge: 6000 * 60,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      httpOnly: true,
+      secure: false, // Set to true if using HTTPS
     }
 }))
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(errorHandler);
 
 // handle error
 // app.use((err: any, req: any, res: any, next: any) => {
@@ -44,6 +49,7 @@ app.use(passport.session());
 // });
 
 // route
+
 
 initiateRoutes(app);
 

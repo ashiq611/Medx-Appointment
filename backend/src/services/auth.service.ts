@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 import userRepo from "../repo/user.repo";
 import speakeasy from 'speakeasy'
 import qrCode from 'qrcode'
+import { authenticate } from "passport";
 
 
 
@@ -127,7 +128,7 @@ class AuthService {
             };
         }
         return {
-            message: "User is authenticated",
+            authenticate: req.isAuthenticated(),
             id: req.user.id,
             role: req.user.role,
             is_mfa_active: req.user.is_mfa_active
@@ -155,6 +156,49 @@ class AuthService {
 
             }
 
+        }catch(err){
+            console.log(err)
+            return {
+                message: "An error occurred"
+            }
+        }
+    }
+    verify2fa = async (req: any) => {
+        try{    
+            const user = req.user;
+            const { token } = req.body;
+            const isValid = speakeasy.totp.verify({
+                secret: user.two_factor_secret,
+                encoding: "base32",
+                token
+            });
+            if (isValid) {
+               const jwtToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+                return {
+                    message: "2FA token is valid",
+                    token: jwtToken,
+                    is_mfa_active: user.is_mfa_active
+                };
+            } else {
+                return {
+                    message: "Invalid 2FA token"
+                };
+            }    
+        }catch(err){
+            console.log(err)
+            return {
+                message: "An error occurred",
+                error: err  
+                }}
+    }
+    reset2fa = async (req: any) => {
+        try{
+            const user = req.user;
+            const client = await pool.connect();
+            await AuthRepo.update2faSecret(client,{id:user.id, secret:null, is_mfa_active:false});
+            return {
+                message: "2FA reset successful"
+            }
         }catch(err){
             console.log(err)
             return {

@@ -1,5 +1,6 @@
-import { Request, RequestHandler, Response } from "express"
+import { NextFunction, Request, RequestHandler, Response } from "express"
 import authService from "../services/auth.service"
+import { successResponse } from "../utils/response"
 
 
 
@@ -40,9 +41,18 @@ class AuthController {
         })
      }
   }
-  status: RequestHandler = async(req: Request, res : Response) => {
+  status: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
         const user = await authService.status(req)
+        successResponse(res, user, "User status")
+     }catch(err){
+        console.log(err)
+        next(err)
+     }
+  }
+  setup2fa: RequestHandler = async(req: Request, res : Response) => {
+     try{
+        const user = await authService.setup2fa(req)
         res.status(200).json({
             success: true,
             data: user
@@ -55,9 +65,24 @@ class AuthController {
         })
      }
   }
-  setup2fa: RequestHandler = async(req: Request, res : Response) => {
+  verify2fa: RequestHandler = async(req: Request, res : Response) => {
      try{
-        const user = await authService.setup2fa(req)
+        const user = await authService.verify2fa(req)
+        res.status(200).json({
+            success: true,
+            data: user
+        })
+     }catch(err){
+        console.log(err)
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        })
+     }
+  }
+  reset2fa: RequestHandler = async(req: Request, res : Response) => {
+     try{
+        const user = await authService.reset2fa(req)
         res.status(200).json({
             success: true,
             data: user

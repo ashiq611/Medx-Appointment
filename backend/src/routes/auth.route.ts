@@ -12,8 +12,8 @@ router.post('/login',passport.authenticate('local'), expressAsyncHandler(authCon
 router.get('/status', expressAsyncHandler(authController.status));
 
 router.post('/2fa/setup',isAuthenticated, expressAsyncHandler(authController.setup2fa));
-// router.post('/2fa/verify', expressAsyncHandler(authController.verify2fa));
-// router.post('/2fa/reset', expressAsyncHandler(authController.reset2fa));
+router.post('/2fa/verify', expressAsyncHandler(authController.verify2fa));
+router.post('/2fa/reset', expressAsyncHandler(authController.reset2fa));
 router.post('/logout', expressAsyncHandler(authController.logout));
 
 export default router;
