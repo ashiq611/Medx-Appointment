@@ -105,6 +105,45 @@ class AuthController {
      }
   }
 
+   changePassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
+       try{
+         const user = await authService.changePassword(req)
+          if (user?.message === "Unauthorized user") {
+                unauthorizedResponse(res, user?.message)
+            }
+         successResponse(res, user, "Password changed successfully")
+       }catch(err){
+         console.log(err)
+         next(err)
+       }
+   }
+
+   forgotPassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
+      try{
+         const user = await authService.forgotPassword(req)
+         if (user?.message === "Unauthorized user") {
+               unauthorizedResponse(res, user?.message)
+            }
+         successResponse(res, user, "Password reset link sent to email")
+       }catch(err){
+         console.log(err)
+         next(err)
+       }
+   }
+
+   resetPassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
+      try{
+         const user = await authService.resetPassword(req)
+         if (user?.message === "Unauthorized user") {
+               unauthorizedResponse(res, user?.message)
+            }
+         successResponse(res, user, "Password reset successfully")
+       }catch(err){
+         console.log(err)
+         next(err)
+       }
+   }
+
 }
 
 export default new AuthController()

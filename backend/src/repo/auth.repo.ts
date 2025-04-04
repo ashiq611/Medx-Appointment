@@ -36,7 +36,7 @@ class AuthRepo {
      checkExistUser = async (client:any,phone_number:any) => {
         try{
             const query = {
-                text: 'SELECT id, password, role FROM public."User" WHERE phone_number = $1',
+                text: 'SELECT id, password, role, is_first_logged_in, otp, otp_expiry FROM public."User" WHERE phone_number = $1',
                 values: [phone_number],
             };
          const responseData = await client.query(query);
@@ -62,6 +62,42 @@ class AuthRepo {
             const query = {
                 text: 'UPDATE public."User" SET two_factor_secret = $1, is_mfa_active = $2 WHERE id = $3',
                 values: [data.secret,data.is_mfa_active,data.id],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     updatePassword = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'UPDATE public."User" SET password = $1 WHERE id = $2',
+                values: [data.newPassword,data.id],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     saveOtp = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'UPDATE public."User" SET otp = $1, otp_expiry = $3 WHERE phone_number = $2',
+                values: [data.otp,data.phone_number,data.expiry],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     resetPassword = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'UPDATE public."User" SET password = $1, otp = $3, otp_expiry = $4 WHERE phone_number = $2',
+                values: [data.hashedPassword,data.phone_number, data.otp, data.expiry],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];

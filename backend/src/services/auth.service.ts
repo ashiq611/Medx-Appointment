@@ -221,6 +221,111 @@ class AuthService {
             };
         });
     };
+
+    changePassword = async (req: any) => {
+        const client = await pool.connect();
+        try {
+            const { oldPassword, newPassword } = req.body;
+            const user = req.user;
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const result = await AuthRepo.updatePassword(client, { id: user.id, newPassword:hashedPassword });
+            return {
+                message: "Password changed successfully"
+            };
+        } catch (err) {
+            console.log(err);
+            throw err;
+        } finally {
+            client.release();
+        }
+    };
+
+    forgotPassword = async (req: any) => {
+        const client = await pool.connect();
+        try {
+            const { phone_number } = req.body;
+
+            const user = await AuthRepo.checkExistUser(client, phone_number);
+            if (!user) {
+                return {
+                    message: "User not found"
+                };
+            }
+            const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit
+            const expiry = Date.now() + 5 * 60 * 1000; // 5 mins
+
+            // Save OTP and expiry to the database
+            await AuthRepo.saveOtp(client, { phone_number, otp, expiry });
+            // Send OTP to the user's phone number
+
+            console.log("OTP sent to user:", otp);
+
+
+            return {
+                message: "OTP sent successfully",
+                otp: otp,
+                expiry: expiry  
+            };
+        } catch (err) {
+            console.log(err);
+            throw err;
+        } finally {
+            client.release();
+        }
+    };
+
+    resetPassword = async (req: any) => {
+        const client = await pool.connect();
+        try {
+            const { phone_number, otp, newPassword } = req.body;
+
+            let hashedPassword;
+
+            const user = await AuthRepo.checkExistUser(client, phone_number);
+            if (!user) {
+                return {
+                    message: "User not found"
+                };
+            }
+            if(!user.is_first_logged_in){
+
+               hashedPassword = await bcrypt.hash(newPassword, 10);
+
+            }else{
+                if (Date.now() > parseInt(user.otp_expiry)) {
+                    return {
+                        message: "OTP expired"
+                    };
+                  }
+    
+                  if (user.otp !== otp) {
+                    console.log("user otp", user.otp)
+                    console.log("otp", otp)
+                    console.log("otp expired", user.otp_expiry)
+                    return {
+                        message: "Invalid OTP"
+                    };
+                  }
+
+                   hashedPassword = await bcrypt.hash(newPassword, 10);
+            }
+            
+
+           
+          
+             
+            const result = await AuthRepo.resetPassword(client, { phone_number, otp: null,expiry: null, hashedPassword });
+            return {
+                message: "Password reset successfully"
+            };
+        } catch (err) {
+            console.log(err);
+            throw err;
+        } finally {
+            client.release();
+        }
+    };
 }
 
 export default new AuthService();

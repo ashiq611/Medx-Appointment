@@ -14,6 +14,14 @@ router.get('/status', expressAsyncHandler(authController.status));
 router.post('/2fa/setup',isAuthenticated, expressAsyncHandler(authController.setup2fa));
 router.post('/2fa/verify', expressAsyncHandler(authController.verify2fa));
 router.post('/2fa/reset', expressAsyncHandler(authController.reset2fa));
+
+
+router.put('/change-password', expressAsyncHandler(authController.changePassword));
+router.post('/forgot-password', expressAsyncHandler(authController.forgotPassword));
+router.post('/reset-password', expressAsyncHandler(authController.resetPassword));
+
 router.post('/logout', expressAsyncHandler(authController.logout));
+
+
 
 export default router;
