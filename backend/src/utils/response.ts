@@ -68,3 +68,10 @@ export function notModifiedResponse(res: Response, message: string = "Not Modifi
     message,
   });
 }
+
+export function conflictResponse(res: Response, message: string = "Conflict") {
+  return res.status(409).json({
+    success: false,
+    message,
+  });
+}

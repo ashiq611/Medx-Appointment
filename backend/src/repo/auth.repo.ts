@@ -36,7 +36,7 @@ class AuthRepo {
      checkExistUser = async (client:any,phone_number:any) => {
         try{
             const query = {
-                text: 'SELECT userid, password, role FROM public."User" WHERE phone_number = $1',
+                text: 'SELECT id, password, role FROM public."User" WHERE phone_number = $1',
                 values: [phone_number],
             };
          const responseData = await client.query(query);

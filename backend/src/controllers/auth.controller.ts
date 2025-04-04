@@ -1,6 +1,8 @@
 import { NextFunction, Request, RequestHandler, Response } from "express"
 import authService from "../services/auth.service"
-import { successResponse } from "../utils/response"
+import { conflictResponse, createdResponse, successResponse, unauthorizedResponse } from "../utils/response"
+import logger from "../utils/logger"
+import { MyLogger } from "../utils/loki-logger"
 
 
 
@@ -10,11 +12,13 @@ class AuthController {
    register: RequestHandler = async (req,res) => {
       try {
          const result = await authService.register(req.body)
+
+         if (result?.message === "User already exists") {
+
+            conflictResponse(res, result?.message)
+          }
    
-         res.status(201).json({
-            success: true,
-            data: result
-         })
+         createdResponse(res, result, "User registered successfully")
       } catch (err) {
          console.log(err)
          res.status(500).json({
@@ -23,91 +27,81 @@ class AuthController {
          })
       }
    }
-   login: RequestHandler = async(req: Request, res : Response) => {
+   login: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
       // if (req.user.id !== req.params.id) {
       //    return res.status(403).json({ message: "Forbidden: Access denied" });
       //  }
      try{
         const user = await authService.login(req)
-        res.status(200).json({
-            success: true,
-            data: user
-        })
+        MyLogger.info("/Login", user)
+       successResponse(res, user, "User logged in successfully")
      }catch(err){
+      MyLogger.error("Login error", err)
+     logger.errorLogger({
+      
+         method: "POST",
+         message: "Login failed",
+         data: "",
+         traceId: Date.now().toString(),
+       
+
+     })
         console.log(err)
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        })
+         next(err)
+        
      }
   }
   status: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
         const user = await authService.status(req)
+         if (user?.message === "Unauthorized user") {
+               unauthorizedResponse(res, user?.message)
+          }
         successResponse(res, user, "User status")
      }catch(err){
         console.log(err)
         next(err)
      }
   }
-  setup2fa: RequestHandler = async(req: Request, res : Response) => {
+  setup2fa: RequestHandler = async(req: Request, res : Response,next: NextFunction) => {
      try{
         const user = await authService.setup2fa(req)
-        res.status(200).json({
-            success: true,
-            data: user
-        })
+        successResponse(res, user, "2FA setup successfully")
      }catch(err){
         console.log(err)
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        })
+        next(err)
      }
   }
-  verify2fa: RequestHandler = async(req: Request, res : Response) => {
+  verify2fa: RequestHandler = async(req: Request, res : Response,next: NextFunction) => {
      try{
         const user = await authService.verify2fa(req)
-        res.status(200).json({
-            success: true,
-            data: user
-        })
+        successResponse(res, user, "2FA verified successfully")
      }catch(err){
         console.log(err)
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        })
+        next(err)
      }
   }
-  reset2fa: RequestHandler = async(req: Request, res : Response) => {
+  reset2fa: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
         const user = await authService.reset2fa(req)
-        res.status(200).json({
-            success: true,
-            data: user
-        })
+        successResponse(res, user, "2FA reset successfully")
      }catch(err){
         console.log(err)
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        })
+        next(err)
      }
   }
-  logout: RequestHandler = async(req: Request, res : Response) => {
+  logout: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
-        const message = await authService.logout(req)
-        res.status(200).json({
-            success: true,
-            data: message
-        })
+        const result = await authService.logout(req)
+         if (result?.message === "Unauthorized user") {
+             unauthorizedResponse(res, result?.message)
+          }
+
+          successResponse(res, result, "User logged out successfully")
+        
      }catch(err){
         console.log(err)
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        })
+        next(err)
      }
   }
 

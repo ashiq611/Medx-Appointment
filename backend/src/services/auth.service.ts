@@ -17,11 +17,13 @@ class AuthService {
     register = async (body:any) => {
         const client = await pool.connect();
         try{
+            client.query("BEGIN");
             const { name,password, phone_number} = body;
             const role = "Patient"
 
             // check exist user by contact number
             const isExistUser = await AuthRepo.checkExistUser(client, phone_number);
+            console.log(isExistUser, "isExistUser")
 
             if (isExistUser) {
                 return {
@@ -59,10 +61,14 @@ class AuthService {
            console.log(patientid, "patientid")
     
             await AuthRepo.register(client,{ ...newUser, patientid });
+
+            client.query("COMMIT");
         
     
         }catch(err){
+            await client.query("ROLLBACK");
             console.log(err)
+            throw err;
         }finally{
             client.release();
         }
@@ -107,16 +113,13 @@ class AuthService {
             
 
             return {
-                message: "Login successful",
                 id: req.user.id,
                 role: req.user.role,
                 is_mfa_active: req.user.is_mfa_active
             }
         } catch (err) {
             console.log(err);
-            return {
-                message: "An error occurred"
-            };
+            throw err;
         } finally {
             client.release();
         }
@@ -150,7 +153,6 @@ class AuthService {
             })
             const qrImageUrl = await qrCode.toDataURL(url);
             return {
-                message: "2FA setup successful",
                 secret: secret.base32,
                 qrImageUrl
 
@@ -158,9 +160,7 @@ class AuthService {
 
         }catch(err){
             console.log(err)
-            return {
-                message: "An error occurred"
-            }
+            throw err;
         }
     }
     verify2fa = async (req: any) => {
@@ -186,10 +186,9 @@ class AuthService {
             }    
         }catch(err){
             console.log(err)
-            return {
-                message: "An error occurred",
-                error: err  
-                }}
+            throw err;
+            
+        }
     }
     reset2fa = async (req: any) => {
         try{
@@ -201,9 +200,7 @@ class AuthService {
             }
         }catch(err){
             console.log(err)
-            return {
-                message: "An error occurred"
-            }
+            throw err;
         }
     }
     logout = async (req: any) => {
