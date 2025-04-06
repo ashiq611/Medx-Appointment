@@ -77,46 +77,53 @@ class AuthService {
     }
     login = async (req: any) => {
         const client = await pool.connect();
+        const { phone_number, password } = req.body;
         try {
-            // const { phone_number, password } = body;
-    
-            // if (!phone_number || !password) {
-            //     return {
-            //         message: "All fields are required"
-            //     };
-            // }
-    
-            // const user = await AuthRepo.login(client, { phone_number, password });
-    
-            // if (!user) {
-            //     return {
-            //         message: "Invalid username or password"
-            //     };
-            // }
-    
-            // // Create the JWT token after successful login
-            // const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
-    
-            // return {
-            //     message: "Login successful",
-            //     id: user.id,
-            //     name: user.name,
-            //     role: user.role,
-            //     is_mfa_active: user.is_mfa_active,
-            // };
-
-            if(!req.user){
+            const user = await AuthRepo.checkExistUser(client, phone_number);
+            if (!user) {
                 return {
-                    message: "Unauthorized user"
+                    message: "User not found"
                 };
             }
-            
-
-            return {
-                id: req.user.id,
-                role: req.user.role,
-                is_mfa_active: req.user.is_mfa_active
+    
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return {
+                    message: "Invalid phone number or password"
+                };
             }
+            console.log("user", user)
+    
+            if(user.is_mfa_active){
+                const secret = user.two_factor_secret;
+                const otp = speakeasy.totp({
+                    secret: secret,
+                    encoding: "base32"
+                });
+                console.log("otp", otp)
+    
+                req.session.pending_2fa = {
+                    id: user.id
+                }
+                
+                // todo: for mobile app, send otp to user phone number
+                // await sendOtp(otp, user.phone_number);
+    
+                return {
+                    message: "2FA is enabled, please verify your OTP",
+                    otp: otp
+                };
+            } else {
+                const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+    
+                return {
+                    id: user.id,
+                    role: user.role,
+                    is_mfa_active: user.is_mfa_active,
+                    token: token
+                }
+            }
+    
         } catch (err) {
             console.log(err);
             throw err;
