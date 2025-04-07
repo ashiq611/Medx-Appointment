@@ -7,18 +7,18 @@ export function successResponse(res: Response, data: any, message: string = "Suc
     data,
   });
 }
-// export function errorResponse(res: Response, message: string, statusCode: number = 500) {
-//   return res.status(statusCode).json({
-//     success: false,
-//     message,
-//   });
-// }
-export function errorResponse(res: Response, status: number, error: string) {
-  return res.status(status).json({
+export function errorResponse(res: Response, message: string, statusCode: number = 500) {
+  return res.status(statusCode).json({
     success: false,
-    error,
+    message,
   });
 }
+// export function errorResponse(res: Response, status: number, error: string) {
+//   return res.status(status).json({
+//     success: false,
+//     error,
+//   });
+// }
 export function notFoundResponse(res: Response, message: string = "Not Found") {
   return res.status(404).json({
     success: false,
@@ -75,3 +75,12 @@ export function conflictResponse(res: Response, message: string = "Conflict") {
     message,
   });
 }
+
+export function validationErrorResponse(res: Response, message: any) {
+  return res.status(422).json({
+    success: false,
+    errors: "VALIDATION_ERROR",
+    message
+  });
+}
+

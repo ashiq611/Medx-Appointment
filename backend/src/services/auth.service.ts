@@ -8,17 +8,20 @@ import userRepo from "../repo/user.repo";
 import speakeasy from 'speakeasy'
 import qrCode from 'qrcode'
 import { authenticate } from "passport";
+import {conflictResponse, createdResponse, errorResponse, notFoundResponse, successResponse, unauthorizedResponse, validationErrorResponse } from "../utils/response";
+import { NextFunction, Response,Request } from "express";
+import { UserWithMFA } from "../Types/authType";
 
 
 
 
 class AuthService { 
 
-    register = async (body:any) => {
+    register = async (req: Request,res: Response,next: NextFunction) => {
         const client = await pool.connect();
         try{
             client.query("BEGIN");
-            const { name,password, phone_number} = body;
+            const { name,password, phone_number} = req.body;
             const role = "Patient"
 
             // check exist user by contact number
@@ -26,9 +29,7 @@ class AuthService {
             console.log(isExistUser, "isExistUser")
 
             if (isExistUser) {
-                return {
-                  message: "User already exists",
-                };
+                return conflictResponse(res, "User already exists");
               }
 
             // generate username
@@ -42,9 +43,9 @@ class AuthService {
               }
 
             if(!phone_number || !password){
-                return {
-                    message: "All fields are required"
-                }
+
+                return validationErrorResponse(res, "phone_number and password are required")
+                
             }
             const hashedPassword = bcrypt.hashSync(password, 10);
         
@@ -63,6 +64,8 @@ class AuthService {
             await AuthRepo.register(client,{ ...newUser, patientid });
 
             client.query("COMMIT");
+
+            return createdResponse(res, { ...newUser, patientid }, "User registered successfully");
         
     
         }catch(err){
@@ -75,22 +78,18 @@ class AuthService {
        
         
     }
-    login = async (req: any) => {
+    login = async (req: Request,res: Response,next: NextFunction) => {
         const client = await pool.connect();
         const { phone_number, password } = req.body;
         try {
             const user = await AuthRepo.checkExistUser(client, phone_number);
             if (!user) {
-                return {
-                    message: "User not found"
-                };
+                return notFoundResponse(res, "User not found");
             }
     
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return {
-                    message: "Invalid phone number or password"
-                };
+                return notFoundResponse(res, "Invalid credentials");
             }
             console.log("user", user)
     
@@ -102,26 +101,18 @@ class AuthService {
                 });
                 console.log("otp", otp)
     
-                req.session.pending_2fa = {
-                    id: user.id
-                }
+                // req.session.pending_2fa = {
+                //     id: user.id
+                // }
                 
                 // todo: for mobile app, send otp to user phone number
                 // await sendOtp(otp, user.phone_number);
     
-                return {
-                    message: "2FA is enabled, please verify your OTP",
-                    otp: otp
-                };
+               return successResponse(res, { otp }, "2FA OTP sent successfully");
             } else {
                 const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
     
-                return {
-                    id: user.id,
-                    role: user.role,
-                    is_mfa_active: user.is_mfa_active,
-                    token: token
-                }
+                return successResponse(res, token, "User logged in successfully");
             }
     
         } catch (err) {
@@ -131,65 +122,56 @@ class AuthService {
             client.release();
         }
     };
-    status = async (req: any) => {
+    status = async (req: Request, res: Response, next: NextFunction) => {
         if (!req.user) {
-            return {
-                message: "Unauthorized user"
-            };
+            return unauthorizedResponse(res, "Unauthorized user");
         }
-        return {
+        return successResponse(res, {
             authenticate: req.isAuthenticated(),
-            id: req.user.id,
-            role: req.user.role,
-            is_mfa_active: req.user.is_mfa_active
-        };
+            id: (req.user as UserWithMFA).id,
+            role: (req.user as UserWithMFA).role,
+            is_mfa_active: (req.user as UserWithMFA).is_mfa_active
+        }, "User status");
     }
-    setup2fa = async (req: any) => {
+    setup2fa = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const client = await pool.connect();
             console.log("the req user is",req.user)
+            if (!req.user) {
+                return unauthorizedResponse(res, "Unauthorized user");
+            }
             const user = req.user;
             var secret = speakeasy.generateSecret();
             // update the twoFactorSecrect in db
-            await AuthRepo.update2faSecret(client,{id:user.id, secret:secret.base32, is_mfa_active:true});
+            await AuthRepo.update2faSecret(client,{id:(user as UserWithMFA).id, secret:secret.base32, is_mfa_active:true});
             const url = speakeasy.otpauthURL({
                 secret: secret.base32,
-                label: `${req.user.id}`,
+                label: `${(user as UserWithMFA).id}`,
                 issuer: "Medx",
                 encoding: "base32"
             })
             const qrImageUrl = await qrCode.toDataURL(url);
-            return {
-                secret: secret.base32,
-                qrImageUrl
-
-            }
+            return successResponse(res, { secret: secret.base32, qrImageUrl }, "2FA setup successful");
 
         }catch(err){
             console.log(err)
             throw err;
         }
     }
-    verify2fa = async (req: any) => {
+    verify2fa = async (req: Request, res: Response, next: NextFunction) => {
         try{    
             const user = req.user;
             const { token } = req.body;
             const isValid = speakeasy.totp.verify({
-                secret: user.two_factor_secret,
+                secret: (user as any).two_factor_secret,
                 encoding: "base32",
                 token
             });
             if (isValid) {
-               const jwtToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
-                return {
-                    message: "2FA token is valid",
-                    token: jwtToken,
-                    is_mfa_active: user.is_mfa_active
-                };
+               const jwtToken = jwt.sign({ id: (user as UserWithMFA).id, role: (user as UserWithMFA).role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+                return successResponse(res, jwtToken, "2FA verified successfully");
             } else {
-                return {
-                    message: "Invalid 2FA token"
-                };
+                return validationErrorResponse(res, "Invalid 2FA token");
             }    
         }catch(err){
             console.log(err)
@@ -197,49 +179,42 @@ class AuthService {
             
         }
     }
-    reset2fa = async (req: any) => {
+    reset2fa = async (req: Request, res: Response, next: NextFunction) => {
         try{
+            if (!req.user) {
+                return unauthorizedResponse(res, "Unauthorized user");
+            }
             const user = req.user;
             const client = await pool.connect();
-            await AuthRepo.update2faSecret(client,{id:user.id, secret:null, is_mfa_active:false});
-            return {
-                message: "2FA reset successful"
-            }
+            await AuthRepo.update2faSecret(client,{id:(user as UserWithMFA).id, secret:null, is_mfa_active:false});
+            return successResponse(res, null, "2FA reset successfully");
         }catch(err){
             console.log(err)
             throw err;
         }
     }
-    logout = async (req: any) => {
+    logout = async (req: any,res: any, next: any) => {
         if (!req.user) {
-            return {
-                message: "Unauthorized user"
-            };
+            return unauthorizedResponse(res, "Unauthorized user");
         }
-        req.logout((error: any) => { 
+        const result = req.logout((error: any) => { 
             if (error) {
                 console.log(error);
-                return {
-                    message: "User not logged in" 
-                };
+                return errorResponse(res, error);
             }
-            return {
-                message: "Logout successful"
-            };
+            return successResponse(res, result, "User logged out successfully")
         });
     };
 
-    changePassword = async (req: any) => {
+    changePassword = async (req: Request, res: Response, next: NextFunction) => {
         const client = await pool.connect();
         try {
             const { oldPassword, newPassword } = req.body;
             const user = req.user;
 
             const hashedPassword = await bcrypt.hash(newPassword, 10);
-            const result = await AuthRepo.updatePassword(client, { id: user.id, newPassword:hashedPassword });
-            return {
-                message: "Password changed successfully"
-            };
+            const result = await AuthRepo.updatePassword(client, { id: (user as UserWithMFA).id, newPassword:hashedPassword });
+            return successResponse(res, result, "Password updated successfully");
         } catch (err) {
             console.log(err);
             throw err;
@@ -248,16 +223,14 @@ class AuthService {
         }
     };
 
-    forgotPassword = async (req: any) => {
+    forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
         const client = await pool.connect();
         try {
             const { phone_number } = req.body;
 
             const user = await AuthRepo.checkExistUser(client, phone_number);
             if (!user) {
-                return {
-                    message: "User not found"
-                };
+                return notFoundResponse(res, "User not found");
             }
             const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit
             const expiry = Date.now() + 5 * 60 * 1000; // 5 mins
@@ -269,11 +242,7 @@ class AuthService {
             console.log("OTP sent to user:", otp);
 
 
-            return {
-                message: "OTP sent successfully",
-                otp: otp,
-                expiry: expiry  
-            };
+            return successResponse(res, { otp, expiry }, "OTP sent successfully");
         } catch (err) {
             console.log(err);
             throw err;
@@ -282,7 +251,7 @@ class AuthService {
         }
     };
 
-    resetPassword = async (req: any) => {
+    resetPassword = async (req: Request, res: Response, next: NextFunction) => {
         const client = await pool.connect();
         try {
             const { phone_number, otp, newPassword } = req.body;
@@ -291,9 +260,7 @@ class AuthService {
 
             const user = await AuthRepo.checkExistUser(client, phone_number);
             if (!user) {
-                return {
-                    message: "User not found"
-                };
+                return notFoundResponse(res, "User not found");
             }
             if(!user.is_first_logged_in){
 
@@ -301,18 +268,14 @@ class AuthService {
 
             }else{
                 if (Date.now() > parseInt(user.otp_expiry)) {
-                    return {
-                        message: "OTP expired"
-                    };
+                    return errorResponse(res, "OTP expired");
                   }
     
                   if (user.otp !== otp) {
                     console.log("user otp", user.otp)
                     console.log("otp", otp)
                     console.log("otp expired", user.otp_expiry)
-                    return {
-                        message: "Invalid OTP"
-                    };
+                    return errorResponse(res, "Invalid OTP");
                   }
 
                    hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -323,9 +286,7 @@ class AuthService {
           
              
             const result = await AuthRepo.resetPassword(client, { phone_number, otp: null,expiry: null, hashedPassword });
-            return {
-                message: "Password reset successfully"
-            };
+            return successResponse(res, result, "Password reset successfully");
         } catch (err) {
             console.log(err);
             throw err;

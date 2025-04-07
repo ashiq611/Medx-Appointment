@@ -1,24 +1,20 @@
 import { NextFunction, Request, RequestHandler, Response } from "express"
 import authService from "../services/auth.service"
-import { conflictResponse, createdResponse, successResponse, unauthorizedResponse } from "../utils/response"
+import {  successResponse } from "../utils/response"
 import logger from "../utils/logger"
 import { MyLogger } from "../utils/loki-logger"
+import { serializeResponseToNext } from "../utils/serializeResponseToNext"
 
 
 
 
 class AuthController {
 
-   register: RequestHandler = async (req,res) => {
+   register: RequestHandler = async (req,res,next) => {
       try {
-         const result = await authService.register(req.body)
+       await authService.register(req,res,next)
 
-         if (result?.message === "User already exists") {
-
-            conflictResponse(res, result?.message)
-          }
-   
-         createdResponse(res, result, "User registered successfully")
+         
       } catch (err) {
          console.log(err)
          res.status(500).json({
@@ -28,13 +24,10 @@ class AuthController {
       }
    }
    login: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
-      // if (req.user.id !== req.params.id) {
-      //    return res.status(403).json({ message: "Forbidden: Access denied" });
-      //  }
+     
      try{
-        const user = await authService.login(req)
-        MyLogger.info("/Login", user)
-       successResponse(res, user, "User logged in successfully")
+        const user = await authService.login(req,res, next)
+        
      }catch(err){
       MyLogger.error("Login error", err)
      logger.errorLogger({
@@ -53,11 +46,8 @@ class AuthController {
   }
   status: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
-        const user = await authService.status(req)
-         if (user?.message === "Unauthorized user") {
-               unauthorizedResponse(res, user?.message)
-          }
-        successResponse(res, user, "User status")
+        const user = await authService.status(req,res, next)
+         
      }catch(err){
         console.log(err)
         next(err)
@@ -65,8 +55,7 @@ class AuthController {
   }
   setup2fa: RequestHandler = async(req: Request, res : Response,next: NextFunction) => {
      try{
-        const user = await authService.setup2fa(req)
-        successResponse(res, user, "2FA setup successfully")
+        await authService.setup2fa(req,res, next)
      }catch(err){
         console.log(err)
         next(err)
@@ -74,8 +63,8 @@ class AuthController {
   }
   verify2fa: RequestHandler = async(req: Request, res : Response,next: NextFunction) => {
      try{
-        const user = await authService.verify2fa(req)
-        successResponse(res, user, "2FA verified successfully")
+        await authService.verify2fa(req,res,next)
+       
      }catch(err){
         console.log(err)
         next(err)
@@ -83,8 +72,8 @@ class AuthController {
   }
   reset2fa: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
-        const user = await authService.reset2fa(req)
-        successResponse(res, user, "2FA reset successfully")
+        const user = await authService.reset2fa(req,res, next)
+    
      }catch(err){
         console.log(err)
         next(err)
@@ -92,13 +81,8 @@ class AuthController {
   }
   logout: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
-        const result = await authService.logout(req)
-         if (result?.message === "Unauthorized user") {
-             unauthorizedResponse(res, result?.message)
-          }
-
-          successResponse(res, result, "User logged out successfully")
-        
+        await authService.logout(req,res, next)
+         // serializeResponseToNext(res, data, next)  
      }catch(err){
         console.log(err)
         next(err)
@@ -107,11 +91,8 @@ class AuthController {
 
    changePassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
        try{
-         const user = await authService.changePassword(req)
-          if (user?.message === "Unauthorized user") {
-                unauthorizedResponse(res, user?.message)
-            }
-         successResponse(res, user, "Password changed successfully")
+        await authService.changePassword(req,res, next)
+          
        }catch(err){
          console.log(err)
          next(err)
@@ -120,11 +101,8 @@ class AuthController {
 
    forgotPassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
       try{
-         const user = await authService.forgotPassword(req)
-         if (user?.message === "Unauthorized user") {
-               unauthorizedResponse(res, user?.message)
-            }
-         successResponse(res, user, "Password reset link sent to email")
+         await authService.forgotPassword(req,res, next)
+       
        }catch(err){
          console.log(err)
          next(err)
@@ -133,11 +111,7 @@ class AuthController {
 
    resetPassword: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
       try{
-         const user = await authService.resetPassword(req)
-         if (user?.message === "Unauthorized user") {
-               unauthorizedResponse(res, user?.message)
-            }
-         successResponse(res, user, "Password reset successfully")
+         const user = await authService.resetPassword(req, res, next)
        }catch(err){
          console.log(err)
          next(err)
