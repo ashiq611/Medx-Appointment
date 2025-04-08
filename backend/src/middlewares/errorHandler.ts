@@ -3,6 +3,6 @@ import { errorResponse } from "../utils/response";
 
 export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
   console.error(err);
-  errorResponse(res, 500, err);
+  errorResponse(res, err);
   
 }
