@@ -5,17 +5,23 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/services/store";
 
-export default function HomePage() {
+
+export default function DashboardPage() {
   const { user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      router.push("/dashboard"); // Redirect logged-in users
-    } else {
-      router.push("/login");     // Or send them to login
+    if (!user) {
+      router.push("/login");
     }
   }, [user]);
 
-  return <p>Redirecting...</p>;
+  if (!user) return <p>Checking authentication...</p>;
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl">Welcome, {user.id}</h1>
+      {/* Secure dashboard content */}
+    </div>
+  );
 }

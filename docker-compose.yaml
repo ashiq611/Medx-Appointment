@@ -69,23 +69,19 @@ services:
       - "3020:3020"
 
 
-  # medx-frontend-container:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-
-  #   ports:
-  #     - "3009:3009"
-    
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
-
-  #   volumes:
-  #     - ./dashboard:/app
-  #     -  /app/node_modules 
-
-  #   # env_file:
-  #     # - ./frontend/.env.local
-
-  #   depends_on:
-  #     - medx-backend-container
+  medx-frontend-container:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000" 
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - medx-backend-container
+    networks:
+      - medx-dev
