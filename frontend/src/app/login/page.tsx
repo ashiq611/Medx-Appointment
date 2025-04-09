@@ -1,44 +1,49 @@
-"use client";
+'use client';
 
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/store";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 
-import { useRouter } from "next/navigation";
-import { loginUser } from "@/api/api";
 
-export default function LoginPage() {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
+import axiosInstance from "@/api/axios";
+import DynamicForm from "@/components/DynamicForm";
+import { loginFormFields } from "../constant/formFeilds";
+import { useRouter } from 'next/navigation'
+import { resetForm } from "@/services/slices/formSlice";
+
+export default function LoginForm() {
+  const formData = useSelector((state: RootState) => state.form);
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleLogin = async () => {
-    const res = await dispatch<any>(loginUser(phone, password));
-    if (res?.type === "auth/loginSuccess") {
-      router.push("/dashboard");
+  const handleSubmit = async () => {
+ 
+    try {
+      const response = await axiosInstance.post("/auth/login", {
+        phone_number: formData.phoneNumber,
+        password: formData.password,
+      });
+
+      console.log("✅ Login successful:", response.data);
+      alert(`Login successful: ${response.data.data.otp}`);
+
+      resetForm();
+
+      router.push("/verify");
+      
+
+      // setUser();
+      // Set auth state or redirect here
+    } catch (err: any) {
+      console.error("❌ Login error:", err);
+      setError(err?.response?.data?.message || "Login failed.");
     }
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-xl mb-4">Login</h1>
-      <input
-        type="text"
-        placeholder="Phone"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        className="border p-2 mb-2 block w-full"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 mb-4 block w-full"
-      />
-      <button onClick={handleLogin} className="bg-blue-600 text-white px-4 py-2">
-        Login
-      </button>
-    </div>
+    <>
+      <DynamicForm fields={loginFormFields} onSubmit={handleSubmit} buttonText="Login" />
+      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+    </>
   );
 }
