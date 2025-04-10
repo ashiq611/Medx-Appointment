@@ -1,23 +1,37 @@
-// hoc/withAuth.tsx
-import { useSelector } from 'react-redux'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { RootState } from '@/services/store'
+import { useAuthStore } from '@/store/useStore';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-export const withAuth = (Component: any) => {
-  return (props: any) => {
-    const { isAuthenticated, loading } = useSelector((state: RootState) => state.auth)
-    const router = useRouter()
+export function withAuth(Component: any) {
+  return function AuthHOC(props: any) {
+    const { isAuthenticated, loading,checkAuth } = useAuthStore((state) => state);
+    const router = useRouter();
+    const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
-      if (!loading && !isAuthenticated) {
-        router.push('/login')
+      // Ensure we only proceed once hydration is done
+      if (!loading && isAuthenticated !== null) {
+        setIsHydrated(true);
       }
-    }, [loading, isAuthenticated])
+    }, [loading, isAuthenticated]);
 
-    if (loading) return <p>Loading...</p>
-    if (!isAuthenticated) return null
+    // Redirect logic after hydration and check for authentication
+    useEffect(() => {
+      // checkAuth(); // Check authentication status on mount
+      if (isHydrated && !loading && !isAuthenticated) {
+        router.push('/login'); // Redirect to login if not authenticated
+      }
+    }, [isHydrated, loading, isAuthenticated, router]);
 
-    return <Component {...props} />
-  }
+    // Handle loading and hydration status
+    if (!isHydrated || loading) {
+      return <p>Loading...</p>;
+    }
+
+    if (!isAuthenticated) {
+      return null; // or show a loading indicator until hydration completes
+    }
+
+    return <Component {...props} />;
+  };
 }

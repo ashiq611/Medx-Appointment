@@ -93,27 +93,42 @@ class AuthService {
             }
             console.log("user", user)
     
-            if(user.is_mfa_active){
-                const secret = user.two_factor_secret;
-                const otp = speakeasy.totp({
-                    secret: secret,
-                    encoding: "base32"
-                });
-                console.log("otp", otp)
+            // if(user.is_mfa_active){
+            //     const secret = user.two_factor_secret;
+            //     const otp = speakeasy.totp({
+            //         secret: secret,
+            //         encoding: "base32"
+            //     });
+            //     console.log("otp", otp)
     
-                // req.session.pending_2fa = {
-                //     id: user.id
-                // }
+            //     // req.session.pending_2fa = {
+            //     //     id: user.id
+            //     // }
                 
-                // todo: for mobile app, send otp to user phone number
-                // await sendOtp(otp, user.phone_number);
+            //     // todo: for mobile app, send otp to user phone number
+            //     // await sendOtp(otp, user.phone_number);
     
-               return successResponse(res, { otp }, "2FA OTP sent successfully");
-            } else {
+            //    return successResponse(res, { otp }, "2FA OTP sent successfully");
+            // } else {
                 const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+
+                // res.cookie("token", token, {
+                //     httpOnly: true,  // Can't be accessed via JavaScript
+                //     // secure: process.env.NODE_ENV === "production", // Only for HTTPS
+                //     // sameSite: "Strict", // CSRF protection
+                //     maxAge: 24 * 60 * 60 * 1000, // Optional: set expiration time for the cookie
+                //   });
     
-                return successResponse(res, token, "User logged in successfully");
-            }
+                return successResponse(res, {
+                        id: user.id,
+                        name: user.name,
+                        phone_number: user.phone_number,
+                        role: user.role,
+                        is_mfa_active: user.is_mfa_active,
+                        token: token,
+
+                }, "User logged in successfully");
+            // }
     
         } catch (err) {
             console.log(err);
@@ -162,14 +177,26 @@ class AuthService {
         try{    
             const user = req.user;
             const { token } = req.body;
+            console.log("token", token)
+            console.log("sue", user)
+
             const isValid = speakeasy.totp.verify({
                 secret: (user as any).two_factor_secret,
                 encoding: "base32",
-                token
+                token,
+                window: 2
             });
+            console.log(isValid, "isValid")
             if (isValid) {
-               const jwtToken = jwt.sign({ id: (user as UserWithMFA).id, role: (user as UserWithMFA).role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
-                return successResponse(res, jwtToken, "2FA verified successfully");
+            //    const jwtToken = jwt.sign({ id: (user as UserWithMFA).id, role: (user as UserWithMFA).role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+                return successResponse(res, {
+                    authenticate: true,
+                    user: {
+                        id: (user as UserWithMFA).id,
+                    role: (user as UserWithMFA).role,
+                    is_mfa_active: (user as UserWithMFA).is_mfa_active
+                    }
+                }, "2FA verified successfully");
             } else {
                 return validationErrorResponse(res, "Invalid 2FA token");
             }    

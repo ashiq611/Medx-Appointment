@@ -1,35 +1,45 @@
 'use client';
 
-import { useSelector } from "react-redux";
-import { RootState } from "@/services/store";
-import { useState } from "react";
 
 
+import { use, useEffect, useState } from "react";
 import axiosInstance from "@/api/axios";
 import DynamicForm from "@/components/DynamicForm";
 import { loginFormFields } from "../constant/formFeilds";
 import { useRouter } from 'next/navigation'
-import { resetForm } from "@/services/slices/formSlice";
+
+
+import { useAuthStore, useFormStore } from "@/store/useStore";
 
 export default function LoginForm() {
-  const formData = useSelector((state: RootState) => state.form);
+  const { formData, resetFormData } = useFormStore();
+  const { login, loading, isAuthenticated } = useAuthStore((state) => (
+  state));
+
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     router.push("/dashboard"); // Redirect logged-in users
+  //   }
+  // }
+  // , [isAuthenticated]);
+
+
   const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async () => {
  
     try {
-      const response = await axiosInstance.post("/auth/login", {
-        phone_number: formData.phoneNumber,
-        password: formData.password,
-      });
 
-      console.log("✅ Login successful:", response.data);
-      alert(`Login successful: ${response.data.data.otp}`);
+      const phoneNumber = formData.phoneNumber;
+      const password = formData.password;
 
-      resetForm();
-
-      router.push("/verify");
+      // Call the login function from the store
+      await login(phoneNumber, password);
+      // Reset form data after successful login
+      resetFormData();
+    
+      router.push("/dashboard");
       
 
       // setUser();

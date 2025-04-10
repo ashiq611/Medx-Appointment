@@ -36,7 +36,26 @@ class AuthRepo {
      checkExistUser = async (client:any,phone_number:any) => {
         try{
             const query = {
-                text: 'SELECT id, password, role, is_first_logged_in, otp, otp_expiry, is_mfa_active FROM public."User" WHERE phone_number = $1',
+                text: `SELECT 
+    u.id,
+    u.password,
+    u.role,
+    u.is_first_logged_in,
+    u.is_mfa_active,
+    u.phone_number,
+    CASE
+        WHEN u.role = 'Doctor' THEN d.name
+        WHEN u.role = 'Patient' THEN p.name -- Replace with actual column names
+        WHEN u.role = 'Admin' THEN a.name   -- Replace with actual column names
+        WHEN u.role = 'Receptionist' THEN r.name  -- Replace with actual column names
+        ELSE NULL
+    END AS name
+FROM public."User" u
+LEFT JOIN Doctor d ON u.doctor_id = d.DoctorID
+LEFT JOIN Patient p ON u.patient_id = p.PatientID
+LEFT JOIN Admin a ON u.admin_id = a.AdminID
+LEFT JOIN Receptionist r ON u.receptionist_id = r.ReceptionistID
+WHERE u.phone_number = $1;`,
                 values: [phone_number],
             };
          const responseData = await client.query(query);

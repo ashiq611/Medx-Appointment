@@ -1,27 +1,37 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { RootState } from "@/services/store";
+import { withAuth } from "@/hoc/withAuth";
+import { useAuthStore } from "@/store/useStore";
 
 
-export default function DashboardPage() {
-  const { user } = useSelector((state: RootState) => state.auth);
+function DashboardPage() {
   const router = useRouter();
+  const { user,checkAuth, logout} = useAuthStore((state) => (state))
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
-  }, [user]);
+    checkAuth(); // Check authentication status on mount
+  }, []);
+  
+  console.log("🚀 ~ file: page.tsx:8 ~ DashboardPage ~ user:", user)
 
-  if (!user) return <p>Checking authentication...</p>;
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  
+
+ 
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl">Welcome, {user.id}</h1>
+      <h1 className="text-2xl">Welcome, {user?.name}</h1>
       {/* Secure dashboard content */}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
+
+export default withAuth(DashboardPage);

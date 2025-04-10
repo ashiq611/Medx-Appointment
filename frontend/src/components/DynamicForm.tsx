@@ -1,8 +1,8 @@
 'use client';
 
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/services/store";
-import { setFormValue } from "@/services/slices/formSlice";
+import { useFormStore } from "@/store/useStore";
+
+
 
 interface Field {
   label: string;
@@ -20,12 +20,12 @@ export default function DynamicForm({
   onSubmit: () => void;
   buttonText?: string;
 }) {
-  const dispatch = useDispatch();
-  const formData = useSelector((state: RootState) => state.form);
+  // Use Zustand store to access and update form data
+  const { formData, setFormValue } = useFormStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    dispatch(setFormValue({ name, value }));
+    setFormValue(name, value); // Update form data in Zustand store
   };
 
   return (

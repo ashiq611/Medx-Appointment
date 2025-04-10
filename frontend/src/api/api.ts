@@ -7,7 +7,7 @@ export const loginUser = async (phone_number: string, password: string) => {
   
 
   export const verifyOtp = async (token: string) => {
-    const res = await axiosInstance.post('/auth/verify-otp', { token })
+    const res = await axiosInstance.post('/auth/2fa/verify', { token })
     return res.data
   }
 

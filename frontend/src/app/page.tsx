@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+
 import { useRouter } from "next/navigation";
-import { RootState } from "@/services/store";
+import { useAuthStore } from "@/store/useStore";
+
 
 export default function HomePage() {
-  const { user } = useSelector((state: RootState) => state.auth);
+const { user } = useAuthStore((state) => state);
   const router = useRouter();
 
   useEffect(() => {
