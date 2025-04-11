@@ -26,6 +26,12 @@ export const resendOtp = async () => {
     const res = await axiosInstance.post('/auth/resend-otp')
     return res.data
   }
+
+
+export const getAllHospitals = async () => {
+  const res = await axiosInstance.get('/users/get-all-hospital')
+  return res.data
+}
   
   
   

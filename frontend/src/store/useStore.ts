@@ -119,3 +119,18 @@ export const useFormStore = create<FormState>()(
     resetFormData: () => set({ formData: {} }),
   }))
 );
+
+
+
+// export const useHospitalStore = create<FormState>()(
+//   devtools((set) => ({
+//     formData: {},
+//     setFormValue: (name, value) =>
+//       set((state) => ({
+//         formData: { ...state.formData, [name]: value },
+//       })),
+//     resetFormData: () => set({ formData: {} }),
+//   }))
+// );
+
+

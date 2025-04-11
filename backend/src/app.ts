@@ -69,7 +69,7 @@ const corsoptions = {
 app.use(cors(corsoptions));
 
 app.use(session({
-    secret: process.env.JWT_SECRET!,
+    secret: process.env.JWT_SECRET as string,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -81,6 +81,13 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+initiateRoutes(app);
 
 app.use(errorHandler);
 
@@ -96,7 +103,6 @@ app.use(errorHandler);
 // route
 
 
-initiateRoutes(app);
 
 
 

@@ -62,12 +62,14 @@ class UserService {
     }
   }
   async getBranch() {
+    const client = await pool.connect();
     try {
-      const client = await pool.connect();
       const result = await hospitalRepo.getBranch(client);
       return result;
     } catch (err) {
       console.log(err);
+    }finally {
+      client.release();
     }
   }
   async getBranchWiseDoctor(branchid: any) {
