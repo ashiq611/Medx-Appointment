@@ -138,15 +138,42 @@ class AuthService {
         }
     };
     status = async (req: Request, res: Response, next: NextFunction) => {
+        
+        const client = await pool.connect();
+        try{
+
+        
         if (!req.user) {
             return unauthorizedResponse(res, "Unauthorized user");
         }
+
+        const userDetails = await AuthRepo.userDetails(client, (req.user as UserWithMFA).id);
+        console.log(userDetails, "userDetails") 
+
+        // {
+        //     id: '69fd1c07-e936-436a-b730-778d454ab35c',
+        //     password: '$2b$10$zLlskwsFljxgZjH4AKtBvu..IlGpn9B3mNnr4IzVclRhI0bnBR/G6',
+        //     role: 'Patient',
+        //     is_first_logged_in: true,
+        //     is_mfa_active: true,
+        //     phone_number: '01775079040',
+        //     name: 'spectrum'
+        //   } userDetails
         return successResponse(res, {
             authenticate: req.isAuthenticated(),
             id: (req.user as UserWithMFA).id,
             role: (req.user as UserWithMFA).role,
-            is_mfa_active: (req.user as UserWithMFA).is_mfa_active
+            is_mfa_active: (req.user as UserWithMFA).is_mfa_active,
+            name: userDetails.name,
+            phone_number: userDetails.phone_number
         }, "User status");
+    }catch(err){
+        console.log(err)
+        next(err);
+    }finally{
+
+        client.release();
+    }
     }
     setup2fa = async (req: Request, res: Response, next: NextFunction) => {
         try{

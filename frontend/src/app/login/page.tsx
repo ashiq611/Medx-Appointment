@@ -1,49 +1,52 @@
 'use client';
 
-
-
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from 'next/navigation';
 import axiosInstance from "@/api/axios";
 import DynamicForm from "@/components/DynamicForm";
 import { loginFormFields } from "../constant/formFeilds";
-import { useRouter } from 'next/navigation'
-
-
-import { useAuthStore, useFormStore } from "@/store/useStore";
+import { RootState } from "@/store/store";
+import { resetForm } from "@/store/services/slices/formSlice";
+import { useLoginMutation, useUserInfoQuery } from "@/store/services/api/authApi";
 
 export default function LoginForm() {
-  const { formData, resetFormData } = useFormStore();
-  const { login, loading, isAuthenticated } = useAuthStore((state) => (
-  state));
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push("/dashboard"); // Redirect logged-in users
-  //   }
-  // }
-  // , [isAuthenticated]);
-
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { auth } = useSelector((state: RootState) => state);
 
   const [error, setError] = useState("");
-  const router = useRouter();
+  const formData = useSelector((state: RootState) => state.form); 
+
+  const [login, { data, isSuccess, isLoading }] = useLoginMutation();
+  // const { refetch } = useUserInfoQuery(undefined, { skip: true });
+
+
+
+  useEffect(() => {
+    if(auth.isAuthenticated){
+      router.push("/dashboard");
+    }
+  }, [auth.isAuthenticated, router]);
 
   const handleSubmit = async () => {
- 
     try {
+      const { phoneNumber, password } = formData;
 
-      const phoneNumber = formData.phoneNumber;
-      const password = formData.password;
+      await login({ phone_number: phoneNumber, password }).then((result: any) => {
+        
+      if ('data' in result) {
+        // setTimeout(() => {
+          router.push('/dashboard');
 
-      // Call the login function from the store
-      await login(phoneNumber, password);
-      // Reset form data after successful login
-      resetFormData();
-    
-      router.push("/dashboard");
+      }
+      }
+      );
       
 
-      // setUser();
-      // Set auth state or redirect here
+
+      dispatch(resetForm()); 
+      // isSuccess && router.push("/dashboard");
     } catch (err: any) {
       console.error("❌ Login error:", err);
       setError(err?.response?.data?.message || "Login failed.");

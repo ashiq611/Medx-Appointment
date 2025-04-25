@@ -1,36 +1,33 @@
-import { useAuthStore } from '@/store/useStore';
+// import { useAuthStore } from '@/store/useStore';
+import { useUserInfoQuery } from '@/store/services/api/authApi';
+import { UserloggedIn } from '@/store/services/slices/authSlice';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+// import { useEffect, useState } from 'react';
 
 export function withAuth(Component: any) {
   return function AuthHOC(props: any) {
-    const { isAuthenticated, loading,checkAuth } = useAuthStore((state) => state);
+    const dispatch = useDispatch();
     const router = useRouter();
-    const [isHydrated, setIsHydrated] = useState(false);
+    const { data: user, isSuccess } = useUserInfoQuery(); 
 
     useEffect(() => {
-      // Ensure we only proceed once hydration is done
-      if (!loading && isAuthenticated !== null) {
-        setIsHydrated(true);
+      if (isSuccess && user?.data) {
+        dispatch(UserloggedIn({
+          user: {
+            id: user.data.id,
+            role: user.data.role,
+            is_mfa_active: user.data.is_mfa_active,
+            name: user.data.name,
+            phone_number: user.data.phone_number
+          },
+          token: user.data.token
+        }));
       }
-    }, [loading, isAuthenticated]);
+    }, [isSuccess, user, dispatch]);
 
-    // Redirect logic after hydration and check for authentication
-    useEffect(() => {
-      // checkAuth(); // Check authentication status on mount
-      if (isHydrated && !loading && !isAuthenticated) {
-        router.push('/login'); // Redirect to login if not authenticated
-      }
-    }, [isHydrated, loading, isAuthenticated, router]);
-
-    // Handle loading and hydration status
-    if (!isHydrated || loading) {
-      return <p>Loading...</p>;
-    }
-
-    if (!isAuthenticated) {
-      return null; // or show a loading indicator until hydration completes
-    }
+    console.log("🚀 ~ file: withAuth.tsx:12 ~ AuthHOC ~ user:", user);
 
     return <Component {...props} />;
   };

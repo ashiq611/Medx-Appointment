@@ -3,6 +3,7 @@ import {Strategy as LocalStrategy} from "passport-local";
 import bcrypt from "bcryptjs";
 import pool from "./db";
 import authRepo from "../repo/auth.repo";
+import { cli } from "winston/lib/winston/config";
 
 
 passport.use(
@@ -12,8 +13,8 @@ passport.use(
             passwordField: "password",
         },
         async (phone_number, password, done) => {
+            const client = await pool.connect();
             try {
-                const client = await pool.connect();
                 const user = await authRepo.login(client, { phone_number });
 
                 if (!user) {
@@ -31,6 +32,8 @@ passport.use(
                 console.error("Passport Error authenticating user:", error);
                 console.log(error);
                 return done(error);
+            } finally {
+                client.release();
             }
         }
     )
@@ -42,12 +45,15 @@ passport.serializeUser((user:any, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
         const user = await authRepo.getUserbyID(client, id);
-        console.log("we are deserializing user",user);
+        console.log("Deserialized user:", user);
         done(null, user);
     } catch (error) {
-        done(error);
+        console.error("Error during deserialization:", error);
+        done(error, null);
+    } finally {
+        client.release(); // IMPORTANT!
     }
 });

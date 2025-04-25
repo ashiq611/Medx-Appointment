@@ -71,7 +71,7 @@ app.use(cors(corsoptions));
 app.use(session({
     secret: process.env.JWT_SECRET as string,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true,

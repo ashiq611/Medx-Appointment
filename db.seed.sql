@@ -117,6 +117,9 @@ ADD COLUMN two_factor_secret VARCHAR(255);
 ALTER TABLE "User"
 ADD COLUMN is_first_logged_in BOOLEAN DEFAULT true;
 
+ALTER TABLE "User" ADD COLUMN otp VARCHAR(6);
+ALTER TABLE "User" ADD COLUMN otp_expiry BIGINT;
+
 
 -- Alter Doctor Table to add HospitalBranchID
 ALTER TABLE Doctor
