@@ -94,6 +94,15 @@ function DashboardPage() {
                 📅 Appointment
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => handleNavigate('/branches')}
+                className="w-full bg-yellow-600 text-white py-2 rounded-xl hover:bg-yellow-700"
+              >
+                {/* branch list */}
+                🏥 Branch List
+              </button>
+            </li>
           </ul>
         </motion.div>
       </div>

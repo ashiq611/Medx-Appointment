@@ -27,6 +27,13 @@ class AuthController {
      
      try{
         const user = await authService.login(req,res, next)
+        logger.requestLogger({
+            method: "POST",
+            message: "Login successful",
+            data: user,
+            traceId: Date.now().toString(),
+        })
+        MyLogger.info("Login successful", user)
         
      }catch(err){
       MyLogger.error("Login error", err)

@@ -5,7 +5,7 @@ export const Api = createApi({
   reducerPath: 'myApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3006/api/v1/' }),
   refetchOnMountOrArgChange: true,
-  tagTypes: ['Auth'],
+  tagTypes: ['Auth', 'Appointment','Branch'],
   endpoints: (builder) => ({}),
 //   (builder) => ({
 //     getPosts: builder.query<any[], void>({

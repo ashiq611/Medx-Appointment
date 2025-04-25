@@ -9,6 +9,7 @@ import { loginFormFields } from "../constant/formFeilds";
 import { RootState } from "@/store/store";
 import { resetForm } from "@/store/services/slices/formSlice";
 import { useLoginMutation, useUserInfoQuery } from "@/store/services/api/authApi";
+import { skip } from "node:test";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -17,8 +18,9 @@ export default function LoginForm() {
 
   const [error, setError] = useState("");
   const formData = useSelector((state: RootState) => state.form); 
-
+// skip when doesn't have formData.phoneNumber
   const [login, { data, isSuccess, isLoading }] = useLoginMutation();
+  const shouldSkip = !formData.phoneNumber || !formData.password;
   // const { refetch } = useUserInfoQuery(undefined, { skip: true });
 
 
@@ -33,8 +35,12 @@ export default function LoginForm() {
     try {
       const { phoneNumber, password } = formData;
 
+      // await login({ phone_number: phoneNumber, password }).then((result: any) => {
+      if (shouldSkip) {
+        setError("Phone number and password are required.");
+        return;
+      }
       await login({ phone_number: phoneNumber, password }).then((result: any) => {
-        
       if ('data' in result) {
         // setTimeout(() => {
           router.push('/dashboard');
