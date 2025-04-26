@@ -14,7 +14,7 @@ export default function BranchList() {
 
 
   const handleClick = (id: string) => {
-    router.push(`/branches/${id}`);
+    router.push(`/home/branches/${id}`);
   };
 
   return (

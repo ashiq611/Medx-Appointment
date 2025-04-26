@@ -10,6 +10,11 @@ export default function HomePage() {
 // const { user } = useAuthStore((state) => state);
   const router = useRouter();
 
+  useEffect(() => {
+    // redirect to /home
+    router.push("/home");
+  }, [router]);
+
   // useEffect(() => {
   //   if (user) {
   //     router.push("/dashboard"); // Redirect logged-in users
