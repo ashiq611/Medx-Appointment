@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-white bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50"
           >
             <motion.div
               initial={{ scale: 0.8 }}
@@ -72,20 +72,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <ul className="space-y-4">
                 <li>
                   <button
-                    onClick={() => handleNavigate('/home/doctors')}
-                    className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
+                    onClick={() => handleNavigate('/home')}
+                    className="w-full bg-red-600 text-white py-2 rounded-xl hover:bg-red-700"
                   >
-                    🩺 Doctor List
+                    🏠 Home
+                    
                   </button>
                 </li>
-                <li>
-                  <button
-                    onClick={() => handleNavigate('/home/appointments')}
-                    className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700"
-                  >
-                    📅 Appointments
-                  </button>
-                </li>
+                
                 <li>
                   <button
                     onClick={() => handleNavigate('/home/branches')}
