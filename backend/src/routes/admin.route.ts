@@ -6,10 +6,13 @@ import verifyToken from "../middlewares/auth.middleware";
 import authorizeRoles from "../middlewares/role.middleware";
 import  {RoleNamesEnum}  from "../utils/RoleNames";
 import userController from "../controllers/user.controller";
+import adminController from "../controllers/admin.controller";
 
 const router = Router();
 
 router.get('/get-all-schedules/:doctorid?', expressAsyncHandler(userController.getAllSchedules));
+router.get('/get-appointment', expressAsyncHandler(adminController.getAppointment));
+router.post('/appointment', expressAsyncHandler(adminController.createAppointment));
 
 
 

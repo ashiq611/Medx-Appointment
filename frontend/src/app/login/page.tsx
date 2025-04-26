@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from 'next/navigation';
 import axiosInstance from "@/api/axios";
 import DynamicForm from "@/components/DynamicForm";
-import { loginFormFields } from "../../constant/formFeilds";
+import { loginFormFields } from "../constant/formFeilds";
 import { RootState } from "@/store/store";
 import { resetForm } from "@/store/services/slices/formSlice";
 import { useLoginMutation, useUserInfoQuery } from "@/store/services/api/authApi";
@@ -27,7 +27,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if(auth.isAuthenticated){
-      router.push("/dashboard");
+      router.push("/home");
     }
   }, [auth.isAuthenticated, router]);
 
@@ -43,7 +43,7 @@ export default function LoginForm() {
       await login({ phone_number: phoneNumber, password }).then((result: any) => {
       if ('data' in result) {
         // setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/home');
 
       }
       }

@@ -1,8 +1,9 @@
 "use client";
 
+import { withAuth } from "@/hoc/withAuth";
 import { motion } from "framer-motion";
 
-export default function DashboardPage() {
+ function DashboardPage() {
   return (
     <div className="flex flex-col items-center justify-center">
       <motion.h1
@@ -15,3 +16,6 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+export default withAuth(DashboardPage);
