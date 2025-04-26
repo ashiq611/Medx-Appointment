@@ -20,7 +20,8 @@ export function withAuth(Component: any) {
             role: user.data.role,
             is_mfa_active: user.data.is_mfa_active,
             name: user.data.name,
-            phone_number: user.data.phone_number
+            phone_number: user.data.phone_number,
+            personalId: user.data.personalId,
           },
           token: user.data.token
         }));

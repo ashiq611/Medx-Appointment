@@ -4,13 +4,13 @@ export function successResponse(res: Response, data: any, message: string = "Suc
   return res.status(200).json({
     success: true,
     message,
-    data,
+    data
   });
 }
 export function errorResponse(res: Response, message: string, statusCode: number = 500) {
   return res.status(statusCode).json({
     success: false,
-    message,
+    message
   });
 }
 // export function errorResponse(res: Response, status: number, error: string) {

@@ -7,9 +7,9 @@ import { getDayFromDate } from "../utils/getDayFromDate";
 class UserService {
   async createAppointment(user: any) {
     const { patientId, doctorId, date, ReceptionistID, HospitalBranchID } = user;
+    const client = await pool.connect();
   
     try {
-      const client = await pool.connect();
   
       // Step 1: Get all schedules for the doctor
       const allSchedules = await doctorRepo.getDoctorSchedule(client, doctorId);
@@ -38,10 +38,7 @@ class UserService {
 
       // console.log("Result:", result);
   
-      return {
-        success: true,
-        data: result
-      };
+      return result;
   
     } catch (err) {
       console.error("createAppointment error:", err);
@@ -49,16 +46,20 @@ class UserService {
         success: false,
         error: "Internal Server Error"
       };
+    } finally {
+      client.release();
     }
   }
   
   async getSchedule(doctorid: any) {
+    const client = await pool.connect();
     try {
-      const client = await pool.connect();
       const result = await doctorRepo.getDoctorSchedule(client, doctorid);
       return result;
     } catch (err) {
       console.log(err);
+    } finally {
+      client.release();
     }
   }
   async getBranch() {
@@ -73,31 +74,38 @@ class UserService {
     }
   }
   async getBranchWiseDoctor(branchid: any) {
+    const client = await pool.connect();
     try {
-      const client = await pool.connect();
       const result = await doctorRepo.getBranchWiseDoctor(client, branchid);
       return result;
     } catch (err) {
       console.log(err);
+    } finally {
+      client.release();
     }
   }
   async getDoctorDetails(doctorid: any) {
+    const client = await pool.connect();
     try {
-      const client = await pool.connect();
       const getSchedule = await doctorRepo.getDoctorSchedule(client, doctorid);
       const doctorDetails = await doctorRepo.getDoctorDetails(client, doctorid);
       return { ...doctorDetails, scheduleList: getSchedule };
     } catch (err) {
       console.log(err);
     }
+    finally {
+      client.release();
+    }
   }
   async getAllSchedules(doctorid: any) {
+    const client = await pool.connect();
     try {
-      const client = await pool.connect();
       const result = await doctorRepo.getDoctorSchedule(client, doctorid);
       return result;
     } catch (err) {
       console.log(err);
+    } finally {
+      client.release();
     }
   }
 }

@@ -12,6 +12,7 @@ export default function AppointmentPage() {
     date: "",
     ReceptionistID: "",
     HospitalBranchID: "",
+    scheduleid: "",
   });
 
   const [addAppointment, { data, isLoading, error, isSuccess }] = useAddAppointmentMutation();

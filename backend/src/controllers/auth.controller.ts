@@ -53,8 +53,8 @@ class AuthController {
   }
   status: RequestHandler = async(req: Request, res : Response, next: NextFunction) => {
      try{
-        const user = await authService.status(req,res, next)
-         console.log( "user status")
+         await authService.status(req,res, next)
+
      }catch(err){
         console.log(err)
         next(err)

@@ -136,11 +136,18 @@ WHERE u.phone_number = $1;`,
                 u.phone_number,
                 CASE
                     WHEN u.role = 'Doctor' THEN d.name
-                    WHEN u.role = 'Patient' THEN p.name -- Replace with actual column names
-                    WHEN u.role = 'Admin' THEN a.name   -- Replace with actual column names
-                    WHEN u.role = 'Receptionist' THEN r.name  -- Replace with actual column names
+                    WHEN u.role = 'Patient' THEN p.name
+                    WHEN u.role = 'Admin' THEN a.name
+                    WHEN u.role = 'Receptionist' THEN r.name
                     ELSE NULL
-                END AS name
+                END AS name,
+                CASE
+                    WHEN u.role = 'Doctor' THEN u.doctor_id
+                    WHEN u.role = 'Patient' THEN u.patient_id
+                    WHEN u.role = 'Admin' THEN u.admin_id
+                    WHEN u.role = 'Receptionist' THEN u.receptionist_id
+                    ELSE NULL
+                END AS personalId
             FROM public."User" u
             LEFT JOIN Doctor d ON u.doctor_id = d.DoctorID
             LEFT JOIN Patient p ON u.patient_id = p.PatientID

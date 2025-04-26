@@ -8,6 +8,7 @@ export const appointmentApi = Api.injectEndpoints({
       date: string;
       ReceptionistID: string;
       HospitalBranchID: string;
+      scheduleid: string;
     }>({
       query: (body) => ({
         url: "/users/appointment",
@@ -18,6 +19,7 @@ export const appointmentApi = Api.injectEndpoints({
           "Content-Type": "application/json"
         }
       }),
+      transformResponse: (response: any) => response.data, 
       invalidatesTags: ["Appointment"]
     })
   }),

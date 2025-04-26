@@ -14,7 +14,7 @@ const authSlice = createSlice({
         UserloggedIn: (state, action) => {
             state.isAuthenticated = true;
             state.user = action.payload.user;
-            state.token = action.payload.token;
+            state.token = action.payload.jwtToken;
         },
 
         UserloggedOut: (state) => {
