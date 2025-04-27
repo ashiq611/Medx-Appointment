@@ -56,7 +56,7 @@ export default function DoctorProfilePage() {
 
   const upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
 
-  const handleClick = (id: string) => {
+  const handleClick = (id: any) => {
     router.push(`/home/appointments/${id}`);
   };
 

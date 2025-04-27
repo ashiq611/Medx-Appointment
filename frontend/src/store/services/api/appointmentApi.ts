@@ -42,9 +42,12 @@ export const appointmentApi = Api.injectEndpoints({
     }),
     transformResponse: (response: any) => response.data, 
     invalidatesTags: ["Appointment"]
-  })
-}),
-  
+  }),
+  getAppointments: builder.query<any, { doctorId: string; date: string }>({
+    query: ({ doctorId, date }) => 
+      `admin/get-appointment?doctorid=${doctorId}&date=${date}`,
+  }),
+})
 });
 
-export const { useAddAppointmentMutation, useHospitalAddAppointmentMutation } = appointmentApi;
+export const { useAddAppointmentMutation, useHospitalAddAppointmentMutation, useGetAppointmentsQuery } = appointmentApi;
