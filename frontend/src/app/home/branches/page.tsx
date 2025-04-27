@@ -1,6 +1,7 @@
 "use client";
 
 
+import Loading from "@/components/Loading";
 import { useGetBranchesQuery } from "@/store/services/api/hospitalApi";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ export default function BranchList() {
     const router = useRouter();
   const { data: branches, isLoading, error } = useGetBranchesQuery();
 
-  if (isLoading) return <p className="text-center py-10">Loading...</p>;
+  if (isLoading) return <Loading />;
   if (error) return <p className="text-red-500 text-center py-10">Failed to load branches</p>;
 
 

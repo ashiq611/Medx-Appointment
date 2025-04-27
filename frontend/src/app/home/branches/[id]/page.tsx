@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useGetBranchDoctorsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
+import Loading from '@/components/Loading';
 
 export default function BranchDetailPage() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function BranchDetailPage() {
     const { user } = useSelector((state: any) => state.auth);
   const { data, isLoading } = useGetBranchDoctorsQuery(id as string);
 
-  if (isLoading) return <p className="p-8">Loading...</p>;
+  if (isLoading) return <Loading />;
 
   return (
     <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

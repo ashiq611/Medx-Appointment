@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import { store,persistor } from '@/store/store'
 import { PersistGate } from 'redux-persist/integration/react'
+import Loading from '@/components/Loading'
 
 
 export default function StoreProvider({
@@ -12,7 +13,7 @@ export default function StoreProvider({
 }) {
  
   return <Provider store={store}>
-     <PersistGate loading={<p>Loading...</p>} persistor={persistor}>
+     <PersistGate loading={<Loading />} persistor={persistor}>
     {children}
      </PersistGate>
 

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useAddAppointmentMutation } from '@/store/services/api/appointmentApi';
 import { getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
 import { useSelector } from 'react-redux';
+import Loading from '@/components/Loading';
 
 export default function DoctorProfilePage() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ export default function DoctorProfilePage() {
   const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
   const [message, setMessage] = useState('');
 
-  if (isLoading) return <p className="p-6">Loading doctor profile...</p>;
+  if (isLoading) return <Loading />;
 
   const doctor = data?.data;
 

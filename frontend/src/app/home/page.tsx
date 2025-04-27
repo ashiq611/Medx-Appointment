@@ -2,8 +2,21 @@
 
 import { withAuth } from "@/hoc/withAuth";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
+import { useSelector } from "react-redux";
 
  function DashboardPage() {
+
+  const { user } = useSelector((state: any) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+
+    if (user?.role === "Doctor") {
+      router.push(`/home/doctor/hospital/${user?.personalId}`);
+    }
+  }, [user]);
   return (
     <div className="flex flex-col items-center justify-center">
       <motion.h1

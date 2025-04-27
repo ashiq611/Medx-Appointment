@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useGetAppointmentsQuery } from '@/store/services/api/appointmentApi';
+import Loading from '@/components/Loading';
 
 export default function DoctorAppointmentsPage() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ export default function DoctorAppointmentsPage() {
     date: formattedDate,
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div>Something went wrong</div>;
 
   const handlePrint = () => {

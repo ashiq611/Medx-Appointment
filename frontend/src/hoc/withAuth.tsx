@@ -13,6 +13,13 @@ export function withAuth(Component: any) {
     const { data: user, isSuccess } = useUserInfoQuery(); 
 
     useEffect(() => {
+
+      // if (!isSuccess) {
+      //   router.push('/login');
+      //   return;
+      // }
+
+
       if (isSuccess && user?.data) {
         dispatch(UserloggedIn({
           user: {
@@ -26,6 +33,10 @@ export function withAuth(Component: any) {
           token: user.data.token
         }));
       }
+
+      
+
+      
     }, [isSuccess, user, dispatch]);
 
     console.log("🚀 ~ file: withAuth.tsx:12 ~ AuthHOC ~ user:", user);
