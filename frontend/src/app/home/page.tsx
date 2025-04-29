@@ -33,7 +33,7 @@ function DashboardPage() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 p-6">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)]  bg-gradient-to-b from-blue-100 to-blue-300 p-6">
       <motion.h1
         className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 text-center"
         initial={{ opacity: 0, y: 30 }}
@@ -55,9 +55,10 @@ function DashboardPage() {
       </motion.div>
 
       <motion.img
-        src="https://wallpapers.com/images/featured/healthcare-oco8w27tkw40cp90.jpg" // make sure you have a beautiful image
+        src="https://www.icegif.com/wp-content/uploads/2023/10/icegif-943.gif" // make sure you have a beautiful image
         alt="Doctors Team"
-        className="w-full max-w-md mt-8"
+        className="w-full max-w-md mt-8 rounded-lg shadow-lg"
+        whileHover={{ scale: 1.05 }}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1 }}
