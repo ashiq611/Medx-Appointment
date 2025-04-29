@@ -16,7 +16,9 @@ export default function BranchDetailPage() {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6 text-center">Doctors</h1>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {data?.data?.map((doctor: any) => (
         <motion.div
           key={doctor.doctorid}
@@ -40,6 +42,7 @@ export default function BranchDetailPage() {
           </p>
         </motion.div>
       ))}
+    </div>
     </div>
   );
 }

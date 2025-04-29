@@ -63,16 +63,8 @@ export default function DoctorProfilePage() {
       <p className="text-gray-600 mb-1">Branch: {doctor.branchname}</p>
       <p className="text-gray-600 mb-4">Contact: {doctor.contactinformation}</p>
       <hr className="my-4" />
-{/* 
-      <h3 className="text-lg font-semibold mb-2">Select Appointment Date</h3>
-      <input
-        type="date"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-        className="border rounded-lg px-3 py-2 mb-4 w-full"
-      /> */}
 
-      <h3 className="text-lg font-semibold mb-2">Schedule</h3>
+      <h3 className="text-lg font-semibold mb-2">Schedule <span className='text-red-500 text-xs font-mono'>Please select a Schedule</span></h3>
       {upcomingSchedules.length === 0 ? (
   <p>No available schedules in the next 7 days.</p>
 ) : (

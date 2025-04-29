@@ -3,32 +3,67 @@
 import { withAuth } from "@/hoc/withAuth";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
- function DashboardPage() {
+const doctorPromotions = [
+  "Find the Best Doctors in Your City",
+  "Top Specialists Ready to Serve You",
+  "Get Expert Medical Advice Anytime",
+  "Trusted Care for Your Health",
+  "Your Health, Our Priority",
+];
 
+function DashboardPage() {
   const { user } = useSelector((state: any) => state.auth);
   const router = useRouter();
+  const [currentPromotion, setCurrentPromotion] = useState(0);
 
   useEffect(() => {
-
     if (user?.role === "Doctor") {
       router.push(`/home/doctor/hospital/${user?.personalId}`);
     }
-  }, [user]);
+  }, [user, router]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPromotion((prev) => (prev + 1) % doctorPromotions.length);
+    }, 3000); // Change promotion every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 p-6">
       <motion.h1
-        className="text-3xl font-bold text-blue-800"
-        initial={{ opacity: 0, y: 20 }}
+        className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 text-center"
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
       >
         Welcome to Medx-Appointment
       </motion.h1>
+
+      <motion.div
+        key={currentPromotion}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.6 }}
+        className="text-xl md:text-2xl text-blue-700 font-semibold text-center"
+      >
+        {doctorPromotions[currentPromotion]}
+      </motion.div>
+
+      <motion.img
+        src="https://wallpapers.com/images/featured/healthcare-oco8w27tkw40cp90.jpg" // make sure you have a beautiful image
+        alt="Doctors Team"
+        className="w-full max-w-md mt-8"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1 }}
+      />
     </div>
   );
 }
-
 
 export default withAuth(DashboardPage);

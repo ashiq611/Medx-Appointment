@@ -1,7 +1,7 @@
-'use client'
+'use client';
 import { setFieldValue } from '@/store/services/slices/formSlice';
 import { RootState } from '@/store/store';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 interface Field {
@@ -9,6 +9,7 @@ interface Field {
   label: string;
   type: string;
   placeholder?: string;
+  required?: boolean;
 }
 
 interface DynamicFormProps {
@@ -20,13 +21,27 @@ interface DynamicFormProps {
 const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText }) => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (name: string, value: any) => {
     dispatch(setFieldValue({ key: name, value }));
+    setErrors((prev) => ({ ...prev, [name]: '' })); // clear error when typing
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const newErrors: { [key: string]: string } = {};
+    fields.forEach((field) => {
+      if (field.required && !formState[field.name]) {
+        newErrors[field.name] = `${field.label} is required`;
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
     onSubmit(formState);
   };
 
@@ -36,10 +51,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText 
 
       {fields.map((field) => (
         <div key={field.name} className="flex flex-col space-y-2">
-          <label htmlFor={field.name} className="text-sm font-medium text-gray-700">{field.label}</label>
+          <label htmlFor={field.name} className="text-sm font-medium text-gray-700">
+            {field.label} {field.required && <span className="text-red-500">*</span>}
+          </label>
           <input
             id={field.name}
-            className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`border-2 rounded-lg p-3 focus:outline-none focus:ring-2 ${
+              errors[field.name] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+            }`}
             type={field.type}
             placeholder={field.placeholder}
             value={formState[field.name] || ''}
@@ -48,31 +67,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText 
           {field.name === 'phoneNumber' && (
             <p className="text-sm text-gray-500">Format: 018XXXXXXXX ; Don't use +88</p>
           )}
+          {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
         </div>
       ))}
-
-      {/* Additional Date & Time Picker Fields for medical appointment */}
-      {/* <div className="flex flex-col space-y-2">
-        <label htmlFor="appointmentDate" className="text-sm font-medium text-gray-700">Appointment Date</label>
-        <input
-          id="appointmentDate"
-          className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          type="date"
-          value={formState.appointmentDate || ''}
-          onChange={(e) => handleChange('appointmentDate', e.target.value)}
-        />
-      </div>
-
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="appointmentTime" className="text-sm font-medium text-gray-700">Appointment Time</label>
-        <input
-          id="appointmentTime"
-          className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          type="time"
-          value={formState.appointmentTime || ''}
-          onChange={(e) => handleChange('appointmentTime', e.target.value)}
-        />
-      </div> */}
 
       <button
         type="submit"

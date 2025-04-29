@@ -110,7 +110,7 @@ export default function DoctorProfilePage() {
         />
 
         {/* Schedule Selection */}
-        <h3 className="text-lg font-semibold mb-2">Schedule</h3>
+        <h3 className="text-lg font-semibold mb-2">Schedule <span className='text-red-500 text-xs font-mono'>Please select a Schedule</span></h3>
         {upcomingSchedules.length === 0 ? (
           <p>No available schedules in the next 7 days.</p>
         ) : (
