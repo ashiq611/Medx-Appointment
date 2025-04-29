@@ -1,7 +1,21 @@
+import { register } from "module";
 import { Api } from "./api";
 const urlPrefix = "auth";
 export const authApi = Api.injectEndpoints({
   endpoints: (builder) => ({
+    register: builder.mutation<any, { name: string; phone_number: string; password: string }>({
+      query: (body) => ({
+        url: 'auth/register',
+        withCredentials: true,
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ['Auth'],
+    }),
     login: builder.mutation<any, { phone_number: string; password: string }>({
       query: (body) => ({
         url: 'auth/login',
@@ -42,5 +56,5 @@ export const authApi = Api.injectEndpoints({
     })
     })
 
-export const { useLoginMutation, useUserInfoQuery, useLogoutMutation } = authApi
+export const { useRegisterMutation, useLoginMutation, useUserInfoQuery, useLogoutMutation } = authApi
 // export const { endpoints } = authApi

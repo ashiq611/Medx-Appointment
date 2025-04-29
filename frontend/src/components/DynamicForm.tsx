@@ -45,6 +45,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText 
             value={formState[field.name] || ''}
             onChange={(e) => handleChange(field.name, e.target.value)}
           />
+          {field.name === 'phoneNumber' && (
+            <p className="text-sm text-gray-500">Format: 018XXXXXXXX ; Don't use +88</p>
+          )}
         </div>
       ))}
 

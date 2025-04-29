@@ -3,7 +3,6 @@ import {Strategy as LocalStrategy} from "passport-local";
 import bcrypt from "bcryptjs";
 import pool from "./db";
 import authRepo from "../repo/auth.repo";
-import { cli } from "winston/lib/winston/config";
 
 
 passport.use(
@@ -54,6 +53,6 @@ passport.deserializeUser(async (id, done) => {
         console.error("Error during deserialization:", error);
         done(error, null);
     } finally {
-        client.release(); // IMPORTANT!
+        client.release(); 
     }
 });

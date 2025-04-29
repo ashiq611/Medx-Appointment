@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { useLogoutMutation } from "@/store/services/api/authApi";
 import { UserloggedOut } from "@/store/services/slices/authSlice";
+import { toast } from "react-toastify";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       if (result) {
         dispatch(UserloggedOut());
         router.push("/login");
+        toast.success("Logout successful")
         console.log("Logout successful", result);
       }
     } catch (error) {

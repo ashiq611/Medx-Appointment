@@ -33,7 +33,7 @@ class AuthService {
               }
 
             // generate username
-            const login_slug = `user_${Date.now()}`;
+            const login_slug = `${name}_${Date.now()}`;
 
             if (!RoleNames.includes(role)) {
                 return {
