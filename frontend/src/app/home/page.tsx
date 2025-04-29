@@ -14,10 +14,16 @@ const doctorPromotions = [
   "Your Health, Our Priority",
 ];
 
+const gifImages = [
+  "https://i.pinimg.com/originals/b8/23/e3/b823e38cc01fdb9278b6f7faa2feda6d.gif",
+  "https://www.icegif.com/wp-content/uploads/2023/10/icegif-943.gif",
+];
+
 function DashboardPage() {
   const { user } = useSelector((state: any) => state.auth);
   const router = useRouter();
   const [currentPromotion, setCurrentPromotion] = useState(0);
+  const [currentGif, setCurrentGif] = useState(0);
 
   useEffect(() => {
     if (user?.role === "Doctor") {
@@ -30,6 +36,14 @@ function DashboardPage() {
       setCurrentPromotion((prev) => (prev + 1) % doctorPromotions.length);
     }, 3000); // Change promotion every 3 seconds
     return () => clearInterval(interval);
+  }, []);
+
+
+  useEffect(() => {
+    const gifInterval = setInterval(() => {
+      setCurrentGif((prev) => (prev + 1) % gifImages.length);
+    }, 10000); // Change gif every 10 seconds
+    return () => clearInterval(gifInterval);
   }, []);
 
   return (
@@ -55,7 +69,8 @@ function DashboardPage() {
       </motion.div>
 
       <motion.img
-        src="https://www.icegif.com/wp-content/uploads/2023/10/icegif-943.gif" // make sure you have a beautiful image
+        key={gifImages[currentGif]}
+        src={gifImages[currentGif]}
         alt="Doctors Team"
         className="w-full max-w-md mt-8 rounded-lg shadow-lg"
         whileHover={{ scale: 1.05 }}
