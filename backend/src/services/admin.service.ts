@@ -1,4 +1,5 @@
 import pool from "../config/db";
+import authRepo from "../repo/auth.repo";
 import doctorRepo from "../repo/doctor.repo";
 import hospitalRepo from "../repo/hospital.repo";
 import { getDayFromDate } from "../utils/getDayFromDate";
@@ -122,6 +123,18 @@ class AdminService {
           client.release();
         }
       }
+    async addDoctor(user: any) {
+        const client = await pool.connect();
+        try {
+            const result = await authRepo.addDoctor(client, user);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    } 
   
 }
 

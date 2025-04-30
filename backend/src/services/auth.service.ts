@@ -79,68 +79,85 @@ class AuthService {
         
     }
     login = async (req: Request,res: Response,next: NextFunction) => {
-        const client = await pool.connect();
-        const { phone_number, password } = req.body;
-        try {
-            const user = await AuthRepo.checkExistUser(client, phone_number);
-            if (!user) {
-                return notFoundResponse(res, "User not found");
-            }
+        // const client = await pool.connect();
+        // const { phone_number, password } = req.body;
+        // try {
+        //     const user = await AuthRepo.checkExistUser(client, phone_number);
+        //     if (!user) {
+        //         return notFoundResponse(res, "User not found");
+        //     }
     
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return notFoundResponse(res, "Invalid credentials");
-            }
-            console.log("user", user)
+        //     const isMatch = await bcrypt.compare(password, user.password);
+        //     if (!isMatch) {
+        //         return notFoundResponse(res, "Invalid credentials");
+        //     }
+        //     console.log("user", user)
     
-            // if(user.is_mfa_active){
-            //     const secret = user.two_factor_secret;
-            //     const otp = speakeasy.totp({
-            //         secret: secret,
-            //         encoding: "base32"
-            //     });
-            //     console.log("otp", otp)
+        //     // if(user.is_mfa_active){
+        //     //     const secret = user.two_factor_secret;
+        //     //     const otp = speakeasy.totp({
+        //     //         secret: secret,
+        //     //         encoding: "base32"
+        //     //     });
+        //     //     console.log("otp", otp)
     
-            //     // req.session.pending_2fa = {
-            //     //     id: user.id
-            //     // }
+        //     //     // req.session.pending_2fa = {
+        //     //     //     id: user.id
+        //     //     // }
                 
-            //     // todo: for mobile app, send otp to user phone number
-            //     // await sendOtp(otp, user.phone_number);
+        //     //     // todo: for mobile app, send otp to user phone number
+        //     //     // await sendOtp(otp, user.phone_number);
     
-            //    return successResponse(res, { otp }, "2FA OTP sent successfully");
-            // } else {
-                const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+        //     //    return successResponse(res, { otp }, "2FA OTP sent successfully");
+        //     // } else {
+        //         const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
 
-                // res.cookie("token", token, {
-                //     httpOnly: true,  // Can't be accessed via JavaScript
-                //     // secure: process.env.NODE_ENV === "production", // Only for HTTPS
-                //     // sameSite: "Strict", // CSRF protection
-                //     maxAge: 24 * 60 * 60 * 1000, // Optional: set expiration time for the cookie
-                //   });
+        //         // res.cookie("token", token, {
+        //         //     httpOnly: true,  // Can't be accessed via JavaScript
+        //         //     // secure: process.env.NODE_ENV === "production", // Only for HTTPS
+        //         //     // sameSite: "Strict", // CSRF protection
+        //         //     maxAge: 24 * 60 * 60 * 1000, // Optional: set expiration time for the cookie
+        //         //   });
     
-                return successResponse(res, {
-                        id: user.id,
-                        name: user.name,
-                        phone_number: user.phone_number,
-                        role: user.role,
-                        is_mfa_active: user.is_mfa_active,
-                        token: token,
+        //         return successResponse(res, {
+        //                 id: user.id,
+        //                 name: user.name,
+        //                 phone_number: user.phone_number,
+        //                 role: user.role,
+        //                 is_mfa_active: user.is_mfa_active,
+        //                 token: token,
 
-                }, "User logged in successfully");
-            // }
+        //         }, "User logged in successfully");
+        //     // }
+
+        try{
+            const user = req.user as any;
+
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+
+    res.status(200).json({
+        message: "Login successful",
+        user: {
+            id: user.id,
+            name: user.name,
+            phone_number: user.phone_number,
+            role: user.role,
+        },
+        token,
+    });
     
         } catch (err) {
             console.log(err);
             throw err;
         } finally {
-            client.release();
+            // client.release();
         }
     };
     status = async (req: Request, res: Response, next: NextFunction) => {
         
         const client = await pool.connect();
         try{
+            console.log("the req user is",req.user)
 
         
         if (!req.user) {

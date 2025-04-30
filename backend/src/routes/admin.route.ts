@@ -13,6 +13,9 @@ const router = Router();
 router.get('/get-all-schedules/:doctorid?', expressAsyncHandler(userController.getAllSchedules));
 router.get('/get-appointment', expressAsyncHandler(adminController.getAppointment));
 router.post('/appointment', expressAsyncHandler(adminController.createAppointment));
+router.post('/add-doctor', expressAsyncHandler(adminController.addDoctor));
+// router.post('/add-branch', expressAsyncHandler(adminController.addBranch));
+// router.post('/add-hospital', expressAsyncHandler(adminController.addHospital));
 
 
 

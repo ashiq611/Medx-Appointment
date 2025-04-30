@@ -52,4 +52,33 @@ export const verifyOtpFormFields = [
       required: true,
     }
     ];
-  
+
+// for add doctor
+
+
+export const doctorFields = [
+  {
+    label: "Doctor Name",
+    name: "name",
+    type: "string",
+    required: true,
+  },
+  {
+    label: "Contact Information",
+    name: "contactinformation",
+    type: "string",
+    required: false,
+  },
+  {
+    label: "Education History",
+    name: "educationhistory",
+    type: "text", // This can be rendered as a textarea in your DynamicForm
+    required: false,
+  },
+  {
+    label: "Room No",
+    name: "roomno",
+    type: "string",
+    required: false,
+  },
+];

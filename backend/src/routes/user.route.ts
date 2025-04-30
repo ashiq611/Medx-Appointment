@@ -6,6 +6,7 @@ import verifyToken from "../middlewares/auth.middleware";
 import authorizeRoles from "../middlewares/role.middleware";
 import  {RoleNamesEnum}  from "../utils/RoleNames";
 import userController from "../controllers/user.controller";
+import { isAuthenticated } from "../middlewares/isAuthenticated.middleware";
 
 const router = Router();
 
@@ -41,11 +42,11 @@ router.get('/patient',verifyToken, expressAsyncHandler((req, res) => {
 }));
 
 
-router.post('/appointment', expressAsyncHandler(userController.createAppointment));
+router.post('/appointment', isAuthenticated,expressAsyncHandler(userController.createAppointment));
 
 router.get('/schedule/:doctorid', expressAsyncHandler(userController.getSchedule));
 
-router.get('/get-all-hospital', expressAsyncHandler(userController.getBranch));
+router.get('/get-all-hospital',isAuthenticated, expressAsyncHandler(userController.getBranch));
 
 router.get('/get-branch-wise-doctor/:branchid', expressAsyncHandler(userController.getBranchWiseDoctor));
 

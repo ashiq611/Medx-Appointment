@@ -52,6 +52,7 @@ class AuthController {
    }
    login: RequestHandler = async (req, res, next) => {
       try {
+        console.log("Login request received", req.user);
           await authService.login(req, res, next);
   
           logger.requestLogger({

@@ -162,6 +162,18 @@ WHERE u.phone_number = $1;`,
          console.log(err)
      }
      }
+     addDoctor = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, doctor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+                values: [data.login_slug, data.password, data.role, data.phone_number, data.doctorid],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
 }
 
 

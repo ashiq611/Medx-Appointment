@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/register', expressAsyncHandler(authController.register));
 router.post('/login',passport.authenticate('local'), expressAsyncHandler(authController.login));
-router.get('/status', expressAsyncHandler(authController.status));
+router.get('/status',isAuthenticated,expressAsyncHandler(authController.status));
 
 router.post('/2fa/setup',isAuthenticated, expressAsyncHandler(authController.setup2fa));
 router.post('/2fa/verify', expressAsyncHandler(authController.verify2fa));

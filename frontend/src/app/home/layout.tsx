@@ -105,6 +105,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     🏥 Branches
                   </button>
                 </li>
+
+                <li>
+                  <button
+                    onClick={() => handleNavigate('/home/create/doctor')}
+                    className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700"
+                  >
+                    👨‍⚕️ Add Doctor
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    onClick={() => handleNavigate('/home/create/user')}
+                    className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
+                  >
+                    🧑‍⚕️ Add User
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    onClick={() => handleNavigate('/home/create/branch')}
+                    className="w-full bg-purple-600 text-white py-2 rounded-xl hover:bg-purple-700"
+                  >
+                    🏥 Add Branch
+                  </button>
+                </li>
               </ul>
 
               <button
