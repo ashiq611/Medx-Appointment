@@ -3,7 +3,7 @@ import { useUserInfoQuery } from '@/store/services/api/authApi';
 import { UserloggedIn } from '@/store/services/slices/authSlice';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import { useEffect, useState } from 'react';
 
 export function withAuth(Component: any) {
@@ -11,33 +11,43 @@ export function withAuth(Component: any) {
     const dispatch = useDispatch();
     const router = useRouter();
     const { data: user, isSuccess } = useUserInfoQuery(); 
+    const { isAuthenticated } = useSelector((state: any) => state.auth);
 
     useEffect(() => {
-
-      // if (!isSuccess) {
-      //   router.push('/login');
-      //   return;
-      // }
-
-
-      if (isSuccess && user?.data) {
-        dispatch(UserloggedIn({
-          user: {
-            id: user.data.id,
-            role: user.data.role,
-            is_mfa_active: user.data.is_mfa_active,
-            name: user.data.name,
-            phone_number: user.data.phone_number,
-            personalId: user.data.personalId,
-          },
-          token: user.data.token
-        }));
+      if (!isAuthenticated) {
+        router.push("/login");
       }
+    }, [isAuthenticated, router]);
+
+
+
+
+    // useEffect(() => {
+
+    //   // if (!isSuccess) {
+    //   //   router.push('/login');
+    //   //   return;
+    //   // }
+
+
+    //   if (isSuccess && user?.data) {
+    //     dispatch(UserloggedIn({
+    //       user: {
+    //         id: user.data.id,
+    //         role: user.data.role,
+    //         is_mfa_active: user.data.is_mfa_active,
+    //         name: user.data.name,
+    //         phone_number: user.data.phone_number,
+    //         personalId: user.data.personalId,
+    //       },
+    //       token: user.data.token
+    //     }));
+    //   }
 
       
 
       
-    }, [isSuccess, user, dispatch]);
+    // }, [isSuccess, user, dispatch]);
 
     console.log("🚀 ~ file: withAuth.tsx:12 ~ AuthHOC ~ user:", user);
 

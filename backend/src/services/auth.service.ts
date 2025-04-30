@@ -130,27 +130,31 @@ class AuthService {
         //         }, "User logged in successfully");
         //     // }
 
+        const client = await pool.connect();
+
         try{
-            const user = req.user as any;
+            // const user = req.user as any;
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+            const userDetails = await AuthRepo.userDetails(client, (req.user as UserWithMFA).id);
+            console.log(userDetails, "userDetails") 
 
-    res.status(200).json({
-        message: "Login successful",
-        user: {
-            id: user.id,
-            name: user.name,
-            phone_number: user.phone_number,
-            role: user.role,
-        },
-        token,
-    });
+    // const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+
+    return successResponse(res, {
+        authenticate: req.isAuthenticated(),
+        id: (req.user as UserWithMFA).id,
+        role: (req.user as UserWithMFA).role,
+        is_mfa_active: (req.user as UserWithMFA).is_mfa_active,
+        name: userDetails.name,
+        phone_number: userDetails.phone_number,
+        personalId: userDetails.personalid
+    }, "User logged in successfully");
     
         } catch (err) {
             console.log(err);
             throw err;
         } finally {
-            // client.release();
+            client.release();
         }
     };
     status = async (req: Request, res: Response, next: NextFunction) => {

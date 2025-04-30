@@ -11,6 +11,7 @@ import { loginFormFields } from "../constant/formFeilds";
 import { RootState } from "@/store/store";
 import { resetForm } from "@/store/services/slices/formSlice";
 import { useLoginMutation } from "@/store/services/api/authApi";
+import { UserloggedIn } from "@/store/services/slices/authSlice";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ export default function LoginForm() {
   const formData = useSelector((state: RootState) => state.form);
 
   const [error, setError] = useState("");
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { data, isSuccess, isLoading }] = useLoginMutation();
   const shouldSkip = !formData.phoneNumber || !formData.password;
 
   useEffect(() => {
@@ -37,18 +38,31 @@ export default function LoginForm() {
         return;
       }
 
-      await login({ phone_number: phoneNumber, password }).then((result: any) => {
-        if ('data' in result) {
-          router.push('/home');
-          toast.success("Login successful!");
-        }
-      });
+      const result = await login({ phone_number: phoneNumber, password });
+      console.log("Login result:", data);
 
-      dispatch(resetForm());
+      if ('data' in result) {
+        dispatch(UserloggedIn({
+          user: {
+            id: result.data.data.id,
+            role: result.data.data.role,
+            is_mfa_active: result.data.data.is_mfa_active,
+            name: result.data.name,
+            phone_number: result.data.data.phone_number,
+            personalId: result.data.data.personalId,
+          },
+          token: null // session-based token, no need for JWT
+        }));
+
+        // Navigate to home page after successful login
+        router.push("/home");
+        toast.success("Login successful!");
+      }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Login failed.");
+      const errorMessage = err?.response?.data?.message || "Login failed.";
+      toast.error(errorMessage);
       console.error("❌ Login error:", err);
-      setError(err?.response?.data?.message || "Login failed.");
+      setError(errorMessage);
     }
   };
 

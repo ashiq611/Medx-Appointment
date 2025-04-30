@@ -9,8 +9,9 @@ import { getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
 import { useRouter } from "next/navigation";
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
+import { withAuth } from '@/hoc/withAuth';
 
-export default function DoctorProfilePage() {
+function DoctorProfilePage() {
   const { id } = useParams();
   const router = useRouter();
    const { user } = useSelector((state: any) => state.auth);
@@ -65,12 +66,18 @@ export default function DoctorProfilePage() {
       setMessage('❌ Failed to book appointment.');
     }
   };
-
-  const upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
+  let upcomingSchedules: any[] = [];
+  if (doctor) {
+    upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
+  }
 
   const handleClick = (id: any) => {
     router.push(`/home/appointments/${id}`);
   };
+
+  if (!doctor) {
+    return <div className="text-center">Doctor not found.</div>;
+  }
 
 
   return (
@@ -150,3 +157,6 @@ export default function DoctorProfilePage() {
     </motion.div>
   );
 }
+
+
+export default withAuth(DoctorProfilePage);

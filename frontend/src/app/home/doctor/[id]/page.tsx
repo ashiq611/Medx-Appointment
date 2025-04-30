@@ -8,8 +8,9 @@ import { useAddAppointmentMutation } from '@/store/services/api/appointmentApi';
 import { getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
+import { withAuth } from '@/hoc/withAuth';
 
-export default function DoctorProfilePage() {
+function DoctorProfilePage() {
   const { id } = useParams();
   // need data from auth slice
   const { user } = useSelector((state: any) => state.auth);
@@ -49,7 +50,10 @@ export default function DoctorProfilePage() {
     }
   };
 
-  const upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
+  let upcomingSchedules: any[] = [];
+  if (doctor) {
+    upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
+  }
 
   return (
     <motion.div
@@ -100,3 +104,6 @@ export default function DoctorProfilePage() {
     </motion.div>
   );
 }
+
+
+export default withAuth(DoctorProfilePage);

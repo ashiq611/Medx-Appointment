@@ -44,12 +44,12 @@ router.get('/patient',verifyToken, expressAsyncHandler((req, res) => {
 
 router.post('/appointment', isAuthenticated,expressAsyncHandler(userController.createAppointment));
 
-router.get('/schedule/:doctorid', expressAsyncHandler(userController.getSchedule));
+router.get('/schedule/:doctorid',isAuthenticated, expressAsyncHandler(userController.getSchedule));
 
 router.get('/get-all-hospital',isAuthenticated, expressAsyncHandler(userController.getBranch));
 
-router.get('/get-branch-wise-doctor/:branchid', expressAsyncHandler(userController.getBranchWiseDoctor));
+router.get('/get-branch-wise-doctor/:branchid',isAuthenticated, expressAsyncHandler(userController.getBranchWiseDoctor));
 
-router.get('/doctor-details/:doctorid', expressAsyncHandler(userController.getDoctorDetails));
+router.get('/doctor-details/:doctorid',isAuthenticated, expressAsyncHandler(userController.getDoctorDetails));
 
 export default router;

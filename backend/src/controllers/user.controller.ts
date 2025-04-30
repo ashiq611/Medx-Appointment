@@ -101,7 +101,7 @@ class UserController {
             const result = await userService.getBranchWiseDoctor(req.params.branchid)
 
             logger.requestLogger({method: req.method, data: req.body, message: "Get Branch Wise Doctor", traceId: result.traceId})
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 data: result
             })
