@@ -41,6 +41,19 @@ class HospitalRepo {
         }
     
       }
+      async addBranch(client: any,data: any) {
+        try { 
+            const query = {
+                text: `INSERT INTO HospitalBranch (branchname, location,contactinformation, hospitalid) VALUES ($1, $2, $3, $4)  RETURNING *;`,
+                values: [data.BranchName, data.Location, data.contactinformation, data.HospitalID],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
+    
+      }
 
 }
 

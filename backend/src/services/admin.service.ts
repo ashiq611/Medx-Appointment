@@ -135,6 +135,18 @@ class AdminService {
             client.release();
         }
     } 
+    async addBranch(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.addBranch(client, data);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
   
 }
 

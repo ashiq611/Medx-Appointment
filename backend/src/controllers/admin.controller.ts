@@ -49,6 +49,22 @@ class AdminController {
             })
         }
     }
+
+    addBranch: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.addBranch(req.body)
+            res.status(201).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
    
 
 }
