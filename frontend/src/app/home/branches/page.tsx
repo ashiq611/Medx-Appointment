@@ -6,14 +6,16 @@ import CreateBranchForm from "@/components/CreateBranch";
 import DynamicForm from "@/components/DynamicForm";
 import Loading from "@/components/Loading";
 import Modal from "@/components/modal";
-import { useGetBranchesQuery } from "@/store/services/api/hospitalApi";
+import { useAddBranchMutation, useGetBranchesQuery } from "@/store/services/api/hospitalApi";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function BranchList() {
     const router = useRouter();
   const { data: branches, isLoading, error } = useGetBranchesQuery();
+  const [addBranch, { isLoading: isAdding } ] = useAddBranchMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading) return <Loading />;
@@ -26,8 +28,15 @@ export default function BranchList() {
 
   const handleSubmit = async (data: { [key: string]: any }) => {
     try {
-      // await axios.post('/api/branches', data); // Adjust this endpoint accordingly
-      alert('Branch added successfully!');
+      const finalData = {
+        ...data,
+        HospitalID: "2f7cc464-bcb9-4dab-908e-27b84e1e46d4"
+      }
+      await addBranch(finalData)
+      .then(() => {
+        setIsModalOpen(false);
+        toast.success('Branch added successfully!')
+      })
     } catch (error) {
       console.error(error);
       alert('Failed to add branch');

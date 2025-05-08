@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 type BranchFormProps = {
-  onSubmit: (data: { name: string; address: string; mobile: string }) => void;
+  onSubmit: (data: {BranchName : string, Location : string, contactinformation : string }) => void;
 };
 
 const CreateBranchForm = ({ onSubmit }: BranchFormProps) => {
   const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    mobile: "",
+    BranchName: "",
+    Location: "",
+    contactinformation: ""
   });
 
   const handleChange = (
@@ -21,7 +21,7 @@ const CreateBranchForm = ({ onSubmit }: BranchFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
-    setFormData({ name: "", address: "", mobile: "" });
+    setFormData({ BranchName: "", Location: "", contactinformation: "" });
   };
 
   return (
@@ -35,8 +35,8 @@ const CreateBranchForm = ({ onSubmit }: BranchFormProps) => {
         <label className="block text-sm font-medium">Branch Name</label>
         <input
           type="text"
-          name="name"
-          value={formData.name}
+          name="BranchName"
+          value={formData.BranchName}
           onChange={handleChange}
           required
           className="w-full px-4 py-2 border rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -47,8 +47,8 @@ const CreateBranchForm = ({ onSubmit }: BranchFormProps) => {
         <label className="block text-sm font-medium">Address</label>
         <input
           type="text"
-          name="address"
-          value={formData.address}
+          name="Location"
+          value={formData.Location}
           onChange={handleChange}
           required
           className="w-full px-4 py-2 border rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -59,8 +59,8 @@ const CreateBranchForm = ({ onSubmit }: BranchFormProps) => {
         <label className="block text-sm font-medium">Mobile Number</label>
         <input
           type="tel"
-          name="mobile"
-          value={formData.mobile}
+          name="contactinformation"
+          value={formData.contactinformation}
           onChange={handleChange}
           pattern="01[3-9][0-9]{8}"
           required
