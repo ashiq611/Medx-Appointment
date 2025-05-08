@@ -24,13 +24,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          variants={backdrop}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          onClick={onClose}
-        >
+        className="fixed inset-0 backdrop-blur-md flex justify-center items-center z-50"
+        variants={backdrop}
+        initial="hidden"
+        animate="visible"
+        exit="hidden"
+        onClick={onClose}
+      >
           <motion.div
             className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative"
             variants={modal}

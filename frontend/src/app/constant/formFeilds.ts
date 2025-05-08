@@ -82,3 +82,18 @@ export const doctorFields = [
     required: false,
   },
 ];
+
+export const branchFields = [
+  {
+    label: "Branch Name",
+    name: "name",
+    type: "string",
+    required: true,
+  },
+  {
+    label: "Address",
+    name: "address",
+    type: "string",
+    required: false,
+  },
+];

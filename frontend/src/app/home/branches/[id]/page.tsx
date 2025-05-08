@@ -6,8 +6,12 @@ import { useGetBranchDoctorsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
+import { useState } from 'react';
+import Modal from '@/components/modal';
+import CreateBranchForm from '@/components/CreateBranch';
 
 export default function BranchDetailPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { id } = useParams();
   const router = useRouter();
     const { user } = useSelector((state: any) => state.auth);
@@ -15,9 +19,28 @@ export default function BranchDetailPage() {
 
   if (isLoading) return <Loading />;
 
+  const handleSubmit = async (data: { [key: string]: any }) => {
+    try {
+      // await axios.post('/api/branches', data); // Adjust this endpoint accordingly
+      alert('Branch added successfully!');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to add branch');
+    }
+  };
+
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Doctors</h1>
+      <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold mb-6 text-center">Doctor List</h1>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
+      >
+        Add Doctor
+      </button>
+
+      </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {data?.data?.map((doctor: any) => (
         <motion.div
@@ -43,6 +66,9 @@ export default function BranchDetailPage() {
         </motion.div>
       ))}
     </div>
+    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+           <CreateBranchForm onSubmit={handleSubmit}/>
+          </Modal>
     </div>
   );
 }
