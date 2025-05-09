@@ -198,6 +198,33 @@ class AdminService {
             client.release();
         }
     }
+
+    async addSchedule(data: any) {
+        const client = await pool.connect();
+        try {
+            const isScheduleExist = await doctorRepo.isScheduleExist(client, data);
+            if (isScheduleExist) {
+                return {
+                    success: false,
+                    message: "Schedule already exists"
+                };
+            }
+    
+            const result = await doctorRepo.addSchedule(client, data);
+            return {
+                success: true,
+                data: result
+            };
+        } catch (err) {
+            console.log(err);
+            return {
+                success: false,
+                message: "Something went wrong"
+            };
+        } finally {
+            client.release();
+        }
+    }
   
 }
 

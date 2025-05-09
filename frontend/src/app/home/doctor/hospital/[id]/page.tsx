@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useGetDoctorDetailsQuery } from '@/store/services/api/doctorApi';
+import { useAddScheduleMutation, useGetDoctorDetailsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import {  useHospitalAddAppointmentMutation } from '@/store/services/api/appointmentApi';
@@ -10,6 +10,11 @@ import { useRouter } from "next/navigation";
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
 import { withAuth } from '@/hoc/withAuth';
+import Modal from '@/components/modal';
+import DynamicForm from '@/components/DynamicForm';
+import { branchFields, scheduleFeilds } from '@/app/constant/formFeilds';
+import { toast } from 'react-toastify';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 function DoctorProfilePage() {
   const { id } = useParams();
@@ -17,6 +22,8 @@ function DoctorProfilePage() {
    const { user } = useSelector((state: any) => state.auth);
   const { data, isLoading } = useGetDoctorDetailsQuery(id as string);
   const [HospitalAddAppointment] = useHospitalAddAppointmentMutation();
+  const [addSchedule] = useAddScheduleMutation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
@@ -79,6 +86,28 @@ function DoctorProfilePage() {
     return <div className="text-center">Doctor not found.</div>;
   }
 
+    const handleSubmit = async (data: { [key: string]: any }) => {
+      try {
+        const finalData = {
+         ...data,
+         doctorid: id
+        }
+        await addSchedule(finalData)
+        .then((response) => {
+          if (response.error) {
+            const error = response.error as FetchBaseQueryError;
+            toast.error((error.data as { message: string }).message);
+            return;
+          }
+          setIsModalOpen(false);
+          toast.success('Schedule added successfully!')
+        })
+      } catch (error) {
+        console.error(error);
+        alert('Failed to add schedule');
+      }
+    };
+
 
   return (
     <motion.div
@@ -86,6 +115,16 @@ function DoctorProfilePage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
+      <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold mb-6 text-center">Doctor Details</h1>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
+      >
+        Add Schedule
+      </button>
+
+      </div>
       <h2 className="text-2xl font-bold mb-2">{doctor.doctorName}</h2>
       <p className="text-gray-600 mb-1">Specialty: {doctor.specialtyname}</p>
       <p className="text-gray-600 mb-1">Department: {doctor.departmentname}</p>
@@ -154,6 +193,9 @@ function DoctorProfilePage() {
         {message && <p className="mt-4 text-center text-green-700">{message}</p>}
       </>
     )}
+    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+           <DynamicForm fields={scheduleFeilds} onSubmit={handleSubmit} buttonText="Add Branch" headText="Add Schedule"/>
+          </Modal>
     </motion.div>
   );
 }

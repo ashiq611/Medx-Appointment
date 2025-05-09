@@ -96,6 +96,33 @@ class DoctorRepo {
          console.log(err)
      }
      }
+
+     addSchedule = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."schedule" (doctorid, day, availability, startslot, endslot) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+                values: [data.doctorid, data.day, data.availability, data.start_time, data.end_time],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+
+     isScheduleExist = async (client: any, data: any): Promise<boolean> => {
+        try {
+          const query = {
+            text: "SELECT 1 FROM schedule WHERE doctorid = $1 AND day = $2 LIMIT 1",
+            values: [data.doctorid, data.day],
+          };
+          const responseData = await client.query(query);
+          return responseData.rows.length > 0;
+        } catch (err) {
+          console.error('Error checking schedule existence:', err);
+          return false; 
+        }
+      };
 }
 
 export default new DoctorRepo();

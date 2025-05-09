@@ -19,6 +19,7 @@ router.post('/add-branch', expressAsyncHandler(adminController.addBranch));
 router.get('/get-speciality-department', expressAsyncHandler(adminController.getSpecialityDepartment));
 router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality));
 router.post('/add-department', expressAsyncHandler(adminController.addDepartment));
+router.post('/add-schedule', expressAsyncHandler(adminController.addSchedule));
 
 
 

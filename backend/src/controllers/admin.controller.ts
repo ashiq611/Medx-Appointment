@@ -113,6 +113,30 @@ class AdminController {
             })
         }
     }
+
+    addSchedule: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.addSchedule(req.body);
+    
+            if (!result.success) {
+                res.status(400).json({
+                    success: false,
+                    message: result.message
+                });
+            } else {
+                res.status(201).json({
+                    success: true,
+                    data: result.data
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            });
+        }
+    }
    
 
 }

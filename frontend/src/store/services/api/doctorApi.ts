@@ -22,8 +22,20 @@ export const doctorApi = Api.injectEndpoints({
         },
       }),
       invalidatesTags: ["Doctor"],
+    }),
+    addSchedule: builder.mutation<any, any>({
+      query: (body) => ({
+        url: "/admin/add-schedule",
+        method: "POST",
+        body,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["Doctor"],
     })
   }),
 });
 
-export const { useGetBranchDoctorsQuery, useGetDoctorDetailsQuery , useAddDoctorMutation} = doctorApi;
+export const { useGetBranchDoctorsQuery, useGetDoctorDetailsQuery , useAddDoctorMutation, useAddScheduleMutation} = doctorApi;

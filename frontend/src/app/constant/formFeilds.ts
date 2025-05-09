@@ -129,3 +129,44 @@ export const branchFields = [
     required: false,
   },
 ];
+
+
+export const scheduleFeilds =  [
+  {
+    name: 'day',
+    label: 'Day',
+    type: 'select',
+    options: [
+      { label: 'Saturday', value: 'Saturday' },
+      { label: 'Sunday', value: 'Sunday' },
+      { label: 'Monday', value: 'Monday' },
+      { label: 'Tuesday', value: 'Tuesday' },
+      { label: 'Wednesday', value: 'Wednesday' },
+      { label: 'Thursday', value: 'Thursday' },
+      { label: 'Friday', value: 'Friday' },
+    ],
+    required: true,
+  },
+  {
+    name: 'availability',
+    label: 'Availability',
+    type: 'select',
+    options: [
+      { label: 'Available', value: 'Available' },
+      { label: 'Unavailable', value: 'Unavailable' },
+    ],
+    required: true,
+  },
+  {
+    name: 'start_time',
+    label: 'Start Time',
+    type: 'time',
+    required: true,
+  },
+  {
+    name: 'end_time',
+    label: 'End Time',
+    type: 'time',
+    required: true,
+  },
+];
