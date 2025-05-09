@@ -162,12 +162,35 @@ class AdminService {
             const getDepartment = await hospitalRepo.getDepartment(client);
 
             return {
-                success: true,
-                data: {
-                    speciality: getSpeciality,
-                    department: getDepartment
-                }
+                speciality: getSpeciality,
+                department: getDepartment
             };
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async addSpeciality(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.addSpeciality(client, data);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async addDepartment(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.addDepartment(client, data);
+            return result;
         } catch (err) {
             console.log(err);
         }

@@ -92,6 +92,34 @@ class HospitalRepo {
         }
     }
 
+    async addSpeciality(client: any,data: any) {
+        try { 
+            const query = {
+                text: `INSERT INTO specialty (specialtyname) VALUES ($1)  RETURNING *;`,
+                values: [data.SpecialityName],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
+    
+      }
+
+      async addDepartment(client: any,data: any) {
+        try { 
+            const query = {
+                text: `INSERT INTO department (departmentname) VALUES ($1)  RETURNING *;`,
+                values: [data.DepartmentName],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
+    
+      }
+
 }
 
 export default new HospitalRepo();

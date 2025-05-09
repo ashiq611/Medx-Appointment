@@ -94,7 +94,7 @@ function DoctorProfilePage() {
       <hr className="my-4" />
 
       <button onClick={() => handleClick(id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">See Appointment List</button>
-    {user?.role === "Receptionist" && (
+    {(user?.role === "Receptionist" || user?.role === "Admin") && (
       <>
         {/* Patient Name Input */}
         <h3 className="text-lg font-semibold mb-2">Patient Name</h3>

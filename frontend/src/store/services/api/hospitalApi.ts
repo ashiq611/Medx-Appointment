@@ -22,8 +22,17 @@ export const hospitalApi = Api.injectEndpoints({
         },
       }),
       invalidatesTags: ["Branch"],
+    }),
+    getSpecilityDepartment: builder.query<any[], void>({
+      query: () => ({
+        url: "/admin/get-speciality-department",
+        method: "GET",
+        credentials: "include",
+      }),
+      transformResponse: (response: any) => response.data,
+      providesTags: ["SpecilityDepartment"],
     })
   }),
 });
 
-export const { useGetBranchesQuery, useAddBranchMutation } = hospitalApi;
+export const { useGetBranchesQuery, useAddBranchMutation, useGetSpecilityDepartmentQuery } = hospitalApi;

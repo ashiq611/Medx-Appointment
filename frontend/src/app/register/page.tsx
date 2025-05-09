@@ -69,7 +69,7 @@ export default function RegisterForm() {
           <p className="text-gray-500">Register to book your appointment</p>
         </motion.div>
 
-        <DynamicForm fields={registerFormFields} onSubmit={handleSubmit} buttonText={isLoading ? "Registering..." : "Register"} />
+        <DynamicForm fields={registerFormFields} onSubmit={handleSubmit} buttonText={isLoading ? "Registering..." : "Register"}  headText="Register"/>
 
         {error && (
           <motion.p

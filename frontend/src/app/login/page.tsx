@@ -84,7 +84,7 @@ export default function LoginForm() {
           <p className="text-gray-500">Login to book your appointment</p>
         </motion.div>
 
-        <DynamicForm fields={loginFormFields} onSubmit={handleSubmit} buttonText={isLoading ? "Logging in..." : "Login"} />
+        <DynamicForm fields={loginFormFields} onSubmit={handleSubmit} buttonText={isLoading ? "Logging in..." : "Login"} headText="Login" />
 
         {error && (
           <motion.p

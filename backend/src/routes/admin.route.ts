@@ -17,6 +17,8 @@ router.post('/add-doctor', expressAsyncHandler(adminController.addDoctor));
 router.post('/add-branch', expressAsyncHandler(adminController.addBranch));
 // router.post('/add-hospital', expressAsyncHandler(adminController.addHospital));
 router.get('/get-speciality-department', expressAsyncHandler(adminController.getSpecialityDepartment));
+router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality));
+router.post('/add-department', expressAsyncHandler(adminController.addDepartment));
 
 
 

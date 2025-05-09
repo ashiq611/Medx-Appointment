@@ -78,7 +78,7 @@ export default function BranchList() {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-       <CreateBranchForm onSubmit={handleSubmit}/>
+       <DynamicForm fields={branchFields} onSubmit={handleSubmit} buttonText="Add Branch" headText="Add Branch"/>
       </Modal>
     </div>
   );

@@ -56,7 +56,12 @@ export const verifyOtpFormFields = [
 // for add doctor
 
 
-export const doctorFields = [
+
+
+export const generateDoctorFields = (
+  speciality: { specialtyid: string; specialtyname: string }[],
+  department: { departmentid: string; departmentname: string }[]
+) => [
   {
     label: "Doctor Name",
     name: "name",
@@ -64,15 +69,35 @@ export const doctorFields = [
     required: true,
   },
   {
-    label: "Contact Information",
-    name: "contactinformation",
+    label: "Phone Number",
+    name: "phone_number",
     type: "string",
-    required: false,
+    required: true,
+  },
+  {
+    label: "Specialty",
+    name: "specialtyid",
+    type: "select",
+    required: true,
+    options: speciality.map((s) => ({
+      label: s.specialtyname,
+      value: s.specialtyid,
+    })),
+  },
+  {
+    label: "Department",
+    name: "departmentid",
+    type: "select",
+    required: true,
+    options: department.map((d) => ({
+      label: d.departmentname,
+      value: d.departmentid,
+    })),
   },
   {
     label: "Education History",
     name: "educationhistory",
-    type: "text", // This can be rendered as a textarea in your DynamicForm
+    type: "text",
     required: false,
   },
   {
@@ -83,16 +108,23 @@ export const doctorFields = [
   },
 ];
 
+
 export const branchFields = [
   {
     label: "Branch Name",
-    name: "name",
+    name: "BranchName",
     type: "string",
     required: true,
   },
   {
-    label: "Address",
-    name: "address",
+    label: "Location",
+    name: "Location",
+    type: "string",
+    required: true,
+  },
+  {
+    label: "Contact Information",
+    name: "contactinformation",
     type: "string",
     required: false,
   },

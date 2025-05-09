@@ -2,27 +2,49 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useGetBranchDoctorsQuery } from '@/store/services/api/doctorApi';
+import { useAddDoctorMutation, useGetBranchDoctorsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
 import { useState } from 'react';
 import Modal from '@/components/modal';
 import CreateBranchForm from '@/components/CreateBranch';
+import DynamicForm from '@/components/DynamicForm';
+import { useGetSpecilityDepartmentQuery } from '@/store/services/api/hospitalApi';
+import { generateDoctorFields } from '@/app/constant/formFeilds';
+import { toast } from 'react-toastify';
+
+
 
 export default function BranchDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { id } = useParams();
   const router = useRouter();
     const { user } = useSelector((state: any) => state.auth);
-  const { data, isLoading } = useGetBranchDoctorsQuery(id as string);
+  const { data, isLoading, refetch } = useGetBranchDoctorsQuery(id as string);
+  const { data: SpecilityDepartment } = useGetSpecilityDepartmentQuery();
+  const [addDoctor, { isLoading: isAdding }] = useAddDoctorMutation();
+
+ const speciality = SpecilityDepartment?.speciality;
+const department = SpecilityDepartment?.department;
+
+
+const addDoctorFeild = speciality && department ? generateDoctorFields(speciality, department) : [];
 
   if (isLoading) return <Loading />;
 
   const handleSubmit = async (data: { [key: string]: any }) => {
     try {
-      // await axios.post('/api/branches', data); // Adjust this endpoint accordingly
-      alert('Branch added successfully!');
+      const finalData = {
+        ...data,
+        hospitalbranchid: id
+      }
+      await addDoctor(finalData)
+      .then(() => {
+        setIsModalOpen(false);
+        toast.success('Doctor added successfully!')
+        refetch();
+      })
     } catch (error) {
       console.error(error);
       alert('Failed to add branch');
@@ -67,7 +89,7 @@ export default function BranchDetailPage() {
       ))}
     </div>
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-           <CreateBranchForm onSubmit={handleSubmit}/>
+    <DynamicForm fields={addDoctorFeild} onSubmit={handleSubmit} buttonText="Add Doctor" headText="Add Doctor"/>
           </Modal>
     </div>
   );
