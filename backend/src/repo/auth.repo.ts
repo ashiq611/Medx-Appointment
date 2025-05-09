@@ -175,6 +175,54 @@ WHERE u.phone_number = $1;`,
          console.log(err)
      }
      }
+     addAdminUser = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, admin_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+                values: [data.phone_number, data.password, RoleNamesEnum.ADMIN, data.phone_number, data.adminid],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     addAdmin = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."admin" (name, contactinformation) VALUES ($1, $2) RETURNING *;',
+                values: [data.name, data.phone_number],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     addReceptionistUser = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, receptionist_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
+                values: [data.phone_number, data.password, RoleNamesEnum.RECEPTION, data.phone_number, data.receptionistid],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+     addReceptionist = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."receptionist" (name, contactinformation) VALUES ($1, $2) RETURNING *;',
+                values: [data.name, data.phone_number],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
 
 }
 

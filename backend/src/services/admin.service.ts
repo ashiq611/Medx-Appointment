@@ -4,6 +4,7 @@ import doctorRepo from "../repo/doctor.repo";
 import hospitalRepo from "../repo/hospital.repo";
 import { getDayFromDate } from "../utils/getDayFromDate";
 import bcrypt from "bcryptjs"
+import { RoleNamesEnum } from "../utils/RoleNames";
 
 class AdminService {
     getAppointment = async (doctorid: any, date: any) => {
@@ -222,6 +223,30 @@ class AdminService {
                 message: "Something went wrong"
             };
         } finally {
+            client.release();
+        }
+    }
+
+    addUser = async (user: any) => {
+        const client = await pool.connect();
+        try {
+            if(user.role == RoleNamesEnum.ADMIN){
+                const hashedPassword = bcrypt.hashSync(user.password, 10);
+                const {adminid} = await authRepo.addAdmin(client, user);
+                const result = await authRepo.addAdminUser(client, { ...user, password: hashedPassword , admin_id: adminid});
+                return result;
+            }
+
+            if(user.role == RoleNamesEnum.RECEPTION){
+                const hashedPassword = bcrypt.hashSync(user.password, 10);
+                const {receptionistid} = await authRepo.addReceptionist(client, user);
+                const result = await authRepo.addReceptionistUser(client, { ...user, password: hashedPassword, receptionist_id: receptionistid});
+                return result;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
             client.release();
         }
     }
