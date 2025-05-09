@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs"
+import { RoleNamesEnum } from "../utils/RoleNames";
 
 class AuthRepo {
     register = async (client:any,user:any) => {
@@ -162,11 +163,11 @@ WHERE u.phone_number = $1;`,
          console.log(err)
      }
      }
-     addDoctor = async (client:any,data:any) => {
+     addDoctorUser = async (client:any,data:any) => {
         try{
             const query = {
                 text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, doctor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-                values: [data.login_slug, data.password, data.role, data.phone_number, data.doctorid],
+                values: [data.phone_number, data.password, RoleNamesEnum.DOCTOR, data.phone_number, data.id],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];
@@ -174,6 +175,7 @@ WHERE u.phone_number = $1;`,
          console.log(err)
      }
      }
+
 }
 
 

@@ -3,6 +3,7 @@ import authRepo from "../repo/auth.repo";
 import doctorRepo from "../repo/doctor.repo";
 import hospitalRepo from "../repo/hospital.repo";
 import { getDayFromDate } from "../utils/getDayFromDate";
+import bcrypt from "bcryptjs"
 
 class AdminService {
     getAppointment = async (doctorid: any, date: any) => {
@@ -126,7 +127,13 @@ class AdminService {
     async addDoctor(user: any) {
         const client = await pool.connect();
         try {
-            const result = await authRepo.addDoctor(client, user);
+            let password = "12345678" ;
+             const hashedPassword = bcrypt.hashSync(password, 10);
+
+             const hospitalId = await hospitalRepo.getHospitalId(client, user.hospitalbranchid);
+            const doctorDetails = await doctorRepo.addDoctor(client, user);
+            const id = doctorDetails.doctorid;
+            const result = await authRepo.addDoctorUser(client, { ...user, id, password: hashedPassword, hospitalId });
             return result;
         } catch (err) {
             console.log(err);
@@ -140,6 +147,27 @@ class AdminService {
         try {
             const result = await hospitalRepo.addBranch(client, data);
             return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async getSpecialityDepartment() {
+        const client = await pool.connect();
+        try {
+            const getSpeciality = await hospitalRepo.getSpeciality(client);
+            const getDepartment = await hospitalRepo.getDepartment(client);
+
+            return {
+                success: true,
+                data: {
+                    speciality: getSpeciality,
+                    department: getDepartment
+                }
+            };
         } catch (err) {
             console.log(err);
         }

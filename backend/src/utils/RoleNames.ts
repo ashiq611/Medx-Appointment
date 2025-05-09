@@ -10,7 +10,7 @@ export const RoleNames = [
 
 export enum RoleNamesEnum {
     ADMIN = 'Admin',
-    DOCTOR = 'doctor',
-    PATIENT = 'patient',
-    RECEPTION = 'reception'
+    DOCTOR = 'Doctor',
+    PATIENT = 'Patient',
+    RECEPTION = 'Receptionist'
   }

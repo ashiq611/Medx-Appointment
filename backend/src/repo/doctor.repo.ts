@@ -84,6 +84,18 @@ class DoctorRepo {
             console.log(err);
         }
     }
+    addDoctor = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'INSERT INTO public."doctor" (name, contactinformation, specialtyid, departmentid,hospitalid, hospitalbranchid, educationhistory, roomno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
+                values: [data.name, data.phone_number, data.specialtyid, data.departmentid, data.hospitalid, data.hospitalbranchid, data.educationhistory, data.roomno],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
 }
 
 export default new DoctorRepo();

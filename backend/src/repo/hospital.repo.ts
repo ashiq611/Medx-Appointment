@@ -55,6 +55,43 @@ class HospitalRepo {
     
       }
 
+      async getHospitalId(client: any, hospitalbranchid: any) {
+        try {
+            const query = {
+                text: "SELECT hospitalid FROM HospitalBranch WHERE hospitalbranchid = $1",
+                values: [hospitalbranchid],
+            };
+            const responseData = await client.query(query);
+            return responseData.rows[0].hospitalid;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getSpeciality(client: any) {
+        try {
+            const query = {
+                text: "SELECT * FROM specialty",
+            };
+            const responseData = await client.query(query);
+            return responseData.rows;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getDepartment(client: any) {
+        try {
+            const query = {
+                text: "SELECT * FROM department",
+            };
+            const responseData = await client.query(query);
+            return responseData.rows;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 }
 
 export default new HospitalRepo();
