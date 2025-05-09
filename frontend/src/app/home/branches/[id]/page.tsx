@@ -15,6 +15,11 @@ import { generateDoctorFields } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 
 
+type SpecilityDepartmentResponse = {
+  speciality: any[];
+  department: any[];
+};
+
 
 export default function BranchDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,10 +27,12 @@ export default function BranchDetailPage() {
   const router = useRouter();
     const { user } = useSelector((state: any) => state.auth);
   const { data, isLoading, refetch } = useGetBranchDoctorsQuery(id as string);
-  const { data: SpecilityDepartment } = useGetSpecilityDepartmentQuery();
+  const { data: SpecilityDepartment } = useGetSpecilityDepartmentQuery() as {
+    data: SpecilityDepartmentResponse | undefined;
+  };
   const [addDoctor, { isLoading: isAdding }] = useAddDoctorMutation();
 
- const speciality = SpecilityDepartment?.speciality;
+ const speciality = SpecilityDepartment?.speciality
 const department = SpecilityDepartment?.department;
 
 
