@@ -1,6 +1,5 @@
-import { register } from "module";
+
 import { Api } from "./api";
-const urlPrefix = "auth";
 export const authApi = Api.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<any, { name: string; phone_number: string; password: string }>({

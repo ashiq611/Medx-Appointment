@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useAddScheduleMutation, useGetDoctorDetailsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {  useHospitalAddAppointmentMutation } from '@/store/services/api/appointmentApi';
 import { getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import Loading from '@/components/Loading';
 import { withAuth } from '@/hoc/withAuth';
 import Modal from '@/components/modal';
 import DynamicForm from '@/components/DynamicForm';
-import { branchFields, RoleNamesEnum, scheduleFeilds } from '@/app/constant/formFeilds';
+import { RoleNamesEnum, scheduleFeilds } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -32,11 +32,7 @@ function DoctorProfilePage() {
   const [patientName, setPatientName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  useEffect(() => {
-    if(!user){
-      router.push('/login');
-    }
-  }, [user]);
+  
 
 
   if (isLoading) return <Loading />;

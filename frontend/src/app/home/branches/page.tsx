@@ -2,7 +2,6 @@
 
 
 import { branchFields, RoleNamesEnum } from "@/app/constant/formFeilds";
-import CreateBranchForm from "@/components/CreateBranch";
 import DynamicForm from "@/components/DynamicForm";
 import Loading from "@/components/Loading";
 import Modal from "@/components/modal";
@@ -18,7 +17,7 @@ function BranchList() {
     const router = useRouter();
        const { user } = useSelector((state: any) => state.auth);
   const { data: branches, isLoading, error } = useGetBranchesQuery();
-  const [addBranch, { isLoading: isAdding } ] = useAddBranchMutation();
+  const [addBranch ] = useAddBranchMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading) return <Loading />;

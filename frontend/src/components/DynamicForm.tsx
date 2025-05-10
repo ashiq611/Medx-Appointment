@@ -11,7 +11,7 @@ interface Field {
   type: string;
   placeholder?: string;
   required?: boolean;
-  options?: { label: string; value: string }[]; // for select, radio, etc.
+  options?: { label: string; value: string }[]; 
 }
 
 interface DynamicFormProps {

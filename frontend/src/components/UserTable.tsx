@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import React, { useState } from "react";
 import DynamicForm from "./DynamicForm";
 import Modal from "./modal";
-import { branchFields, userFields } from "@/app/constant/formFeilds";
+import { userFields } from "@/app/constant/formFeilds";
 import { useAddUserMutation } from "@/store/services/api/hospitalApi";
 import { toast } from "react-toastify";
 

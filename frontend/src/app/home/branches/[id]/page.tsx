@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
 import { useState } from 'react';
 import Modal from '@/components/modal';
-import CreateBranchForm from '@/components/CreateBranch';
 import DynamicForm from '@/components/DynamicForm';
 import { useGetSpecilityDepartmentQuery } from '@/store/services/api/hospitalApi';
 import { generateDoctorFields, RoleNamesEnum } from '@/app/constant/formFeilds';
@@ -31,7 +30,7 @@ function BranchDetailPage() {
   const { data: SpecilityDepartment } = useGetSpecilityDepartmentQuery() as {
     data: SpecilityDepartmentResponse | undefined;
   };
-  const [addDoctor, { isLoading: isAdding }] = useAddDoctorMutation();
+  const [addDoctor] = useAddDoctorMutation();
 
  const speciality = SpecilityDepartment?.speciality
 const department = SpecilityDepartment?.department;

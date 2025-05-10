@@ -8,19 +8,7 @@ export const Api = createApi({
   }),
   refetchOnMountOrArgChange: true,
   tagTypes: ['Auth', 'Appointment','Branch', 'SpecilityDepartment', 'Doctor', 'User'],
-  endpoints: (builder) => ({}),
-//   (builder) => ({
-//     getPosts: builder.query<any[], void>({
-//       query: () => 'posts',
-//     }),
-//     login: builder.mutation<any, { phone_number: string; password: string }>({
-//         query: (body) => ({
-//           url: 'auth/login',
-//           method: 'POST',
-//           body
-//         })
-//     }),
-//   }),
+  endpoints: () => ({}),
 });
 
 // Export hooks

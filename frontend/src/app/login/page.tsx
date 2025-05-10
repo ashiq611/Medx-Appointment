@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import DynamicForm from "@/components/DynamicForm";
 import { loginFormFields } from "../constant/formFeilds";
 import { RootState } from "@/store/store";
-import { resetForm } from "@/store/services/slices/formSlice";
 import { useLoginMutation } from "@/store/services/api/authApi";
 import { UserloggedIn } from "@/store/services/slices/authSlice";
 
@@ -19,7 +18,7 @@ export default function LoginForm() {
   const formData = useSelector((state: RootState) => state.form);
 
   const [error, setError] = useState("");
-  const [login, { data, isSuccess, isLoading }] = useLoginMutation();
+  const [login, { data, isLoading }] = useLoginMutation();
   const shouldSkip = !formData.phoneNumber || !formData.password;
 
   useEffect(() => {
