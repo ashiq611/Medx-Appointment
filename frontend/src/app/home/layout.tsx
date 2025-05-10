@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "@/store/services/api/authApi";
 import { UserloggedOut } from "@/store/services/slices/authSlice";
 import { toast } from "react-toastify";
+import { RoleNamesEnum } from "../constant/formFeilds";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+    const { user } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
 
@@ -96,26 +98,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     
                   </button>
                 </li>
-                
-                <li>
-                  <button
-                    onClick={() => handleNavigate('/home/branches')}
-                    className="w-full bg-yellow-600 text-white py-2 rounded-xl hover:bg-yellow-700"
-                  >
-                    🏥 Branches
-                  </button>
-                </li>
-
-                {/* <li>
-                  <button
-                    onClick={() => handleNavigate('/home/create/doctor')}
-                    className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700"
-                  >
-                    👨‍⚕️ Add Doctor
-                  </button>
-                </li> */}
-
-                <li>
+                {
+                  user?.role !== RoleNamesEnum.DOCTOR && (
+                    <li>
+                    <button
+                      onClick={() => handleNavigate('/home/branches')}
+                      className="w-full bg-yellow-600 text-white py-2 rounded-xl hover:bg-yellow-700"
+                    >
+                      🏥 Branches
+                    </button>
+                  </li>
+                  )
+                }
+                   {
+                    RoleNamesEnum.ADMIN === user?.role && (
+                      <li>
                   <button
                     onClick={() => handleNavigate('/home/create/user')}
                     className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
@@ -123,6 +120,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     🧑‍⚕️ Add User
                   </button>
                 </li>
+                    )
+                   }
+
+                
 
                 {/* <li>
                   <button

@@ -18,13 +18,11 @@ interface User {
 interface Props {
   admins: User[];
   receptionists: User[];
-  onAddUserClick: () => void;
 }
 
 export const UserTable: React.FC<Props> = ({
   admins,
-  receptionists,
-  onAddUserClick,
+  receptionists
 }) => {
   const users = [...admins, ...receptionists];
   const [isModalOpen, setIsModalOpen] = useState(false);

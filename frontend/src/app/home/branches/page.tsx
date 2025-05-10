@@ -1,7 +1,7 @@
 "use client";
 
 
-import { branchFields } from "@/app/constant/formFeilds";
+import { branchFields, RoleNamesEnum } from "@/app/constant/formFeilds";
 import CreateBranchForm from "@/components/CreateBranch";
 import DynamicForm from "@/components/DynamicForm";
 import Loading from "@/components/Loading";
@@ -10,10 +10,12 @@ import { useAddBranchMutation, useGetBranchesQuery } from "@/store/services/api/
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 export default function BranchList() {
     const router = useRouter();
+       const { user } = useSelector((state: any) => state.auth);
   const { data: branches, isLoading, error } = useGetBranchesQuery();
   const [addBranch, { isLoading: isAdding } ] = useAddBranchMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,12 +49,17 @@ export default function BranchList() {
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold mb-6 text-center">Hospital Branches</h1>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
-      >
-        Add Branch
-      </button>
+      {
+        RoleNamesEnum.ADMIN === user?.role &&(
+          <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
+        >
+          Add Branch
+        </button>
+        )
+      }
+    
 
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

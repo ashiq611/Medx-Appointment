@@ -202,3 +202,11 @@ export const userFields = [
     ],
   },
 ];
+
+
+export const RoleNamesEnum = {
+  ADMIN: "Admin",
+  DOCTOR: "Doctor",
+  PATIENT: "Patient",
+  RECEPTION: "Receptionist",
+};

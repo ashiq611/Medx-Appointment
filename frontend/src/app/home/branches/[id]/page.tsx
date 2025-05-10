@@ -11,7 +11,7 @@ import Modal from '@/components/modal';
 import CreateBranchForm from '@/components/CreateBranch';
 import DynamicForm from '@/components/DynamicForm';
 import { useGetSpecilityDepartmentQuery } from '@/store/services/api/hospitalApi';
-import { generateDoctorFields } from '@/app/constant/formFeilds';
+import { generateDoctorFields, RoleNamesEnum } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 
 
@@ -62,12 +62,15 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold mb-6 text-center">Doctor List</h1>
-      <button
+       {
+              RoleNamesEnum.ADMIN === user?.role &&(
+                <button
         onClick={() => setIsModalOpen(true)}
         className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
       >
         Add Doctor
-      </button>
+      </button>)
+            }
 
       </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

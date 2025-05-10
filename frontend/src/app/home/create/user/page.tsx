@@ -14,10 +14,7 @@ function CreateUser() {
   const {admin,receptionist} = UserList as any;
   return (
     <>
-    <UserTable admins={admin} receptionists={receptionist} onAddUserClick={() => {
-      // Handle the click event for adding a new user
-      console.log('Add User button clicked')
-    }} />
+    <UserTable admins={admin} receptionists={receptionist} />
       </>
   )
 }

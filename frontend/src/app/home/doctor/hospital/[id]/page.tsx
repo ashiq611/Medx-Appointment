@@ -12,7 +12,7 @@ import Loading from '@/components/Loading';
 import { withAuth } from '@/hoc/withAuth';
 import Modal from '@/components/modal';
 import DynamicForm from '@/components/DynamicForm';
-import { branchFields, scheduleFeilds } from '@/app/constant/formFeilds';
+import { branchFields, RoleNamesEnum, scheduleFeilds } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -117,12 +117,17 @@ function DoctorProfilePage() {
     >
       <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold mb-6 text-center">Doctor Details</h1>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
-      >
-        Add Schedule
-      </button>
+       {
+              RoleNamesEnum.ADMIN === user?.role &&(
+                <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
+              >
+                Add Schedule
+              </button>
+              )
+            }
+     
 
       </div>
       <h2 className="text-2xl font-bold mb-2">{doctor.doctorName}</h2>
