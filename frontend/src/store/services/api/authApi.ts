@@ -5,7 +5,6 @@ export const authApi = Api.injectEndpoints({
     register: builder.mutation<any, { name: string; phone_number: string; password: string }>({
       query: (body) => ({
         url: 'auth/register',
-        withCredentials: true,
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
@@ -18,7 +17,6 @@ export const authApi = Api.injectEndpoints({
     login: builder.mutation<any, { phone_number: string; password: string }>({
       query: (body) => ({
         url: 'auth/login',
-        withCredentials: true,
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
@@ -31,7 +29,6 @@ export const authApi = Api.injectEndpoints({
     userInfo: builder.query<any, void>({
       query: () => ({
         url: 'auth/status',
-        withCredentials: true,
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
@@ -43,7 +40,6 @@ export const authApi = Api.injectEndpoints({
     logout: builder.mutation<any, void>({
       query: () => ({
         url: 'auth/logout',
-        withCredentials: true,
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
