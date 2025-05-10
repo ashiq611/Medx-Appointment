@@ -75,12 +75,12 @@ app.use(cors(corsoptions));
 app.use(session({
     secret: process.env.JWT_SECRET as string,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true,
-      secure: process.env.NODE_ENV === "Production" ? true : false,
-      sameSite: "none", 
+      secure: process.env.NODE_ENV?.toLocaleLowerCase() === "production" ? true : false,
+      // sameSite: "none", 
     }
 }))
 
