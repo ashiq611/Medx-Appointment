@@ -1,8 +1,24 @@
+
+"use client";
+import { branchFields } from '@/app/constant/formFeilds';
+import DynamicForm from '@/components/DynamicForm';
+import Modal from '@/components/modal';
+import { UserTable } from '@/components/UserTable'
+import { useGetUserQuery } from '@/store/services/api/hospitalApi';
 import React from 'react'
 
 function CreateUser() {
+  const { data: UserList, isLoading, error } = useGetUserQuery();
+  if (isLoading) return <p className="text-red-500 text-center py-10">Loading...</p>;
+
+  const {admin,receptionist} = UserList as any;
   return (
-    <div>CreateUser</div>
+    <>
+    <UserTable admins={admin} receptionists={receptionist} onAddUserClick={() => {
+      // Handle the click event for adding a new user
+      console.log('Add User button clicked')
+    }} />
+      </>
   )
 }
 

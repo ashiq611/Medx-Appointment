@@ -7,7 +7,7 @@ export const Api = createApi({
     credentials: "include"
   }),
   refetchOnMountOrArgChange: true,
-  tagTypes: ['Auth', 'Appointment','Branch', 'SpecilityDepartment', 'Doctor'],
+  tagTypes: ['Auth', 'Appointment','Branch', 'SpecilityDepartment', 'Doctor', 'User'],
   endpoints: (builder) => ({}),
 //   (builder) => ({
 //     getPosts: builder.query<any[], void>({

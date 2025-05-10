@@ -233,6 +233,7 @@ class AdminService {
             if(user.role == RoleNamesEnum.ADMIN){
                 const hashedPassword = bcrypt.hashSync(user.password, 10);
                 const {adminid} = await authRepo.addAdmin(client, user);
+                console.log("Admin ID:", adminid);
                 const result = await authRepo.addAdminUser(client, { ...user, password: hashedPassword , admin_id: adminid});
                 return result;
             }
@@ -240,9 +241,28 @@ class AdminService {
             if(user.role == RoleNamesEnum.RECEPTION){
                 const hashedPassword = bcrypt.hashSync(user.password, 10);
                 const {receptionistid} = await authRepo.addReceptionist(client, user);
+                console.log("Receptionist ID:", receptionistid);
                 const result = await authRepo.addReceptionistUser(client, { ...user, password: hashedPassword, receptionist_id: receptionistid});
                 return result;
             }
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    getAllAdminReception = async () => {
+        const client = await pool.connect();
+        try {
+            const getAdmin = await authRepo.getAllAdmin(client);
+            const getReceptionist = await authRepo.getAllReceptionist(client);
+
+            return {
+                admin: getAdmin,
+                receptionist: getReceptionist
+            };
         } catch (err) {
             console.log(err);
         }

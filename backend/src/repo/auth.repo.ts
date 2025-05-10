@@ -179,7 +179,7 @@ WHERE u.phone_number = $1;`,
         try{
             const query = {
                 text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, admin_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-                values: [data.phone_number, data.password, RoleNamesEnum.ADMIN, data.phone_number, data.adminid],
+                values: [data.phone_number, data.password, RoleNamesEnum.ADMIN, data.phone_number, data.admin_id],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];
@@ -203,7 +203,7 @@ WHERE u.phone_number = $1;`,
         try{
             const query = {
                 text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, receptionist_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-                values: [data.phone_number, data.password, RoleNamesEnum.RECEPTION, data.phone_number, data.receptionistid],
+                values: [data.phone_number, data.password, RoleNamesEnum.RECEPTION, data.phone_number, data.receptionist_id],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];
@@ -223,6 +223,30 @@ WHERE u.phone_number = $1;`,
          console.log(err)
      }
      }
+     getAllAdmin = async (client:any) => {
+        try{
+            const query = {
+                text: 'SELECT * FROM public."admin" join "User" on admin.adminid = "User".admin_id',
+                values: [],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows;
+     }catch(err){
+         console.log(err)
+     }
+    }
+        getAllReceptionist = async (client:any) => {
+            try{
+                const query = {
+                    text: 'SELECT * FROM public."receptionist" join "User" on receptionist.receptionistid = "User".receptionist_id',
+                    values: [],
+                };
+            const responseData = await client.query(query);
+            return responseData.rows;
+        }catch(err){
+            console.log(err)
+        }
+        }
 
 }
 

@@ -31,8 +31,29 @@ export const hospitalApi = Api.injectEndpoints({
       }),
       transformResponse: (response: any) => response.data,
       providesTags: ["SpecilityDepartment"],
-    })
+    }),
+    addUser: builder.mutation<any, any>({
+      query: (body) => ({
+        url: "/admin/add-user",
+        method: "POST",
+        body,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["User"],
+    }),
+    getUser: builder.query<any[], void>({
+      query: () => ({
+        url: "/admin/get-all-admin-reception",
+        method: "GET",
+        credentials: "include",
+      }),
+      transformResponse: (response: any) => response.data,
+      providesTags: ["User"],
+    }),
   }),
 });
 
-export const { useGetBranchesQuery, useAddBranchMutation, useGetSpecilityDepartmentQuery } = hospitalApi;
+export const { useGetBranchesQuery, useAddBranchMutation, useGetSpecilityDepartmentQuery, useAddUserMutation, useGetUserQuery } = hospitalApi;

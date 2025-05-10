@@ -170,3 +170,35 @@ export const scheduleFeilds =  [
     required: true,
   },
 ];
+
+
+export const userFields = [
+  {
+    label: "Name",
+    name: "name",
+    type: "string",
+    required: true,
+  },
+  {
+    label: "Phone Number",
+    name: "phone_number",
+    type: "string",
+    required: true,
+  },
+  {
+    label: "Password",
+    name: "password",
+    type: "password",
+    required: true,
+  },
+  {
+    label: "Role",
+    name: "role",
+    type: "select",
+    required: true,
+    options: [
+      { label: "Admin", value: "Admin" },
+      { label: "Receptionist", value: "Receptionist" },
+    ],
+  },
+];

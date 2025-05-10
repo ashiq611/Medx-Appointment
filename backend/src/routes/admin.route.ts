@@ -21,6 +21,7 @@ router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality
 router.post('/add-department', expressAsyncHandler(adminController.addDepartment));
 router.post('/add-schedule', expressAsyncHandler(adminController.addSchedule));
 router.post('/add-user', expressAsyncHandler(adminController.addUser));
+router.get('/get-all-admin-reception', expressAsyncHandler(adminController.getAllAdminReception));
 
 
 
