@@ -1,6 +1,6 @@
-// constants/formFields.ts
 
-import { label } from "framer-motion/client";
+
+
 
 export const loginFormFields = [
     {
@@ -98,13 +98,13 @@ export const generateDoctorFields = (
     label: "Education History",
     name: "educationhistory",
     type: "text",
-    required: false,
+    required: true,
   },
   {
     label: "Room No",
     name: "roomno",
     type: "string",
-    required: false,
+    required: true,
   },
 ];
 
@@ -126,7 +126,7 @@ export const branchFields = [
     label: "Contact Information",
     name: "contactinformation",
     type: "string",
-    required: false,
+    required: true,
   },
 ];
 

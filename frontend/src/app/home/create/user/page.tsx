@@ -4,6 +4,7 @@ import { branchFields } from '@/app/constant/formFeilds';
 import DynamicForm from '@/components/DynamicForm';
 import Modal from '@/components/modal';
 import { UserTable } from '@/components/UserTable'
+import { withAuth } from '@/hoc/withAuth';
 import { useGetUserQuery } from '@/store/services/api/hospitalApi';
 import React from 'react'
 
@@ -19,4 +20,4 @@ function CreateUser() {
   )
 }
 
-export default CreateUser
+export default withAuth(CreateUser);

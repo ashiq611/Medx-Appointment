@@ -8,8 +8,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useGetAppointmentsQuery } from '@/store/services/api/appointmentApi';
 import Loading from '@/components/Loading';
+import { withAuth } from '@/hoc/withAuth';
 
-export default function DoctorAppointmentsPage() {
+function DoctorAppointmentsPage() {
   const { id } = useParams();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -98,3 +99,6 @@ export default function DoctorAppointmentsPage() {
     </motion.div>
   );
 }
+
+
+export default withAuth(DoctorAppointmentsPage);

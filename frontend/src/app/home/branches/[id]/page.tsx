@@ -13,6 +13,7 @@ import DynamicForm from '@/components/DynamicForm';
 import { useGetSpecilityDepartmentQuery } from '@/store/services/api/hospitalApi';
 import { generateDoctorFields, RoleNamesEnum } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
+import { withAuth } from '@/hoc/withAuth';
 
 
 type SpecilityDepartmentResponse = {
@@ -21,7 +22,7 @@ type SpecilityDepartmentResponse = {
 };
 
 
-export default function BranchDetailPage() {
+function BranchDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { id } = useParams();
   const router = useRouter();
@@ -104,3 +105,5 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
     </div>
   );
 }
+
+export default withAuth(BranchDetailPage);

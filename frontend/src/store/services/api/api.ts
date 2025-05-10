@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const Api = createApi({
   reducerPath: 'myApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3006/api/v1/' ,
+  baseQuery: fetchBaseQuery({ baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, 
     credentials: "include"
   }),
   refetchOnMountOrArgChange: true,

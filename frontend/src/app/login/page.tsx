@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import axiosInstance from "@/api/axios";
 import DynamicForm from "@/components/DynamicForm";
 import { loginFormFields } from "../constant/formFeilds";
 import { RootState } from "@/store/store";
@@ -47,14 +46,11 @@ export default function LoginForm() {
             id: result.data.data.id,
             role: result.data.data.role,
             is_mfa_active: result.data.data.is_mfa_active,
-            name: result.data.name,
+            name: result.data.data.name,
             phone_number: result.data.data.phone_number,
             personalId: result.data.data.personalId,
-          },
-          token: null // session-based token, no need for JWT
+          }
         }));
-
-        // Navigate to home page after successful login
         router.push("/home");
         toast.success("Login successful!");
       }

@@ -6,6 +6,7 @@ import CreateBranchForm from "@/components/CreateBranch";
 import DynamicForm from "@/components/DynamicForm";
 import Loading from "@/components/Loading";
 import Modal from "@/components/modal";
+import { withAuth } from "@/hoc/withAuth";
 import { useAddBranchMutation, useGetBranchesQuery } from "@/store/services/api/hospitalApi";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -13,7 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-export default function BranchList() {
+function BranchList() {
     const router = useRouter();
        const { user } = useSelector((state: any) => state.auth);
   const { data: branches, isLoading, error } = useGetBranchesQuery();
@@ -90,3 +91,6 @@ export default function BranchList() {
     </div>
   );
 }
+
+
+export default withAuth(BranchList);

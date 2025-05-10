@@ -1,55 +1,45 @@
-// import { useAuthStore } from '@/store/useStore';
-import { useUserInfoQuery } from '@/store/services/api/authApi';
-import { UserloggedIn } from '@/store/services/slices/authSlice';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-// import { useEffect, useState } from 'react';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useUserInfoQuery } from "@/store/services/api/authApi";
+import { UserloggedIn, UserloggedOut } from "@/store/services/slices/authSlice";
 
 export function withAuth(Component: any) {
   return function AuthHOC(props: any) {
     const dispatch = useDispatch();
     const router = useRouter();
-    const { data: user, isSuccess } = useUserInfoQuery(); 
     const { isAuthenticated } = useSelector((state: any) => state.auth);
 
+    // Call auth status API
+    const { data, error, isSuccess } = useUserInfoQuery();
+
     useEffect(() => {
-      if (!isAuthenticated) {
+      // If Unauthorized error comes from API
+      if (error && "status" in error && error.status === 401) {
+        dispatch(UserloggedOut());
         router.push("/login");
       }
-    }, [isAuthenticated, router]);
 
+      // If user is authenticated from server
+      if (isSuccess && data?.data?.authenticate) {
+        dispatch(
+          UserloggedIn({
+            user: {
+              id: data.data.id,
+              role: data.data.role,
+              is_mfa_active: data.data.is_mfa_active,
+              name: data.data.name,
+              phone_number: data.data.phone_number,
+              personalId: data.data.personalId,
+            },
+            token: null, // no token provided by status endpoint
+          })
+        );
+      }
+    }, [error, isSuccess, data, dispatch, router]);
 
-
-
-    // useEffect(() => {
-
-    //   // if (!isSuccess) {
-    //   //   router.push('/login');
-    //   //   return;
-    //   // }
-
-
-    //   if (isSuccess && user?.data) {
-    //     dispatch(UserloggedIn({
-    //       user: {
-    //         id: user.data.id,
-    //         role: user.data.role,
-    //         is_mfa_active: user.data.is_mfa_active,
-    //         name: user.data.name,
-    //         phone_number: user.data.phone_number,
-    //         personalId: user.data.personalId,
-    //       },
-    //       token: user.data.token
-    //     }));
-    //   }
-
-      
-
-      
-    // }, [isSuccess, user, dispatch]);
-
-    console.log("🚀 ~ file: withAuth.tsx:12 ~ AuthHOC ~ user:", user);
+    // Prevent early render if auth state isn't resolved yet
+    if (!isAuthenticated && !isSuccess) return null;
 
     return <Component {...props} />;
   };
