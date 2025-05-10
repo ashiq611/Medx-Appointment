@@ -34,50 +34,67 @@ function DashboardPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentPromotion((prev) => (prev + 1) % doctorPromotions.length);
-    }, 3000); // Change promotion every 3 seconds
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
-
 
   useEffect(() => {
     const gifInterval = setInterval(() => {
       setCurrentGif((prev) => (prev + 1) % gifImages.length);
-    }, 10000); // Change gif every 10 seconds
+    }, 10000);
     return () => clearInterval(gifInterval);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)]  bg-gradient-to-b from-blue-100 to-blue-300 p-6">
-      <motion.h1
-        className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 text-center"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        Welcome to Medx-Appointment
-      </motion.h1>
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-100 to-blue-300">
 
-      <motion.div
-        key={currentPromotion}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.6 }}
-        className="text-xl md:text-2xl text-blue-700 font-semibold text-center"
-      >
-        {doctorPromotions[currentPromotion]}
-      </motion.div>
+      <div className="w-full bg-red-600 text-white py-2 overflow-hidden shadow-md z-20 rounded-md">
+        <motion.div
+          className="whitespace-nowrap font-semibold text-sm md:text-base"
+          animate={{ x: ['100%', '-100%'] }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: 50,
+            ease: "linear",
+          }}
+        >
+          🔴 Medx introduces 24/7 video consultations • Fast-track appointments now available • Next Update: Get lab results directly on your dashboard •
+        </motion.div>
+      </div>
 
-      <motion.img
-        key={gifImages[currentGif]}
-        src={gifImages[currentGif]}
-        alt="Doctors Team"
-        className="w-full max-w-md mt-8 rounded-lg shadow-lg"
-        whileHover={{ scale: 1.05 }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
-      />
+      <div className="flex flex-col items-center justify-center flex-grow p-6">
+        <motion.h1
+          className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Welcome to Medx-Appointment
+        </motion.h1>
+
+        <motion.div
+          key={currentPromotion}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
+          className="text-xl md:text-2xl text-blue-700 font-semibold text-center"
+        >
+          {doctorPromotions[currentPromotion]}
+        </motion.div>
+
+        <motion.img
+          key={gifImages[currentGif]}
+          src={gifImages[currentGif]}
+          alt="Doctors Team"
+          className="w-full max-w-md mt-8 rounded-lg shadow-lg"
+          whileHover={{ scale: 1.05 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+        />
+      </div>
     </div>
   );
 }

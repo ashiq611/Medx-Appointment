@@ -20,7 +20,7 @@ router.put('/change-password', expressAsyncHandler(authController.changePassword
 router.post('/forgot-password', expressAsyncHandler(authController.forgotPassword));
 router.post('/reset-password', expressAsyncHandler(authController.resetPassword));
 
-router.post('/logout', expressAsyncHandler(authController.logout));
+router.post('/logout',isAuthenticated, expressAsyncHandler(authController.logout));
 
 
 
