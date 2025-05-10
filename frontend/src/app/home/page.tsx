@@ -59,7 +59,7 @@ function DashboardPage() {
             ease: "linear",
           }}
         >
-          🔴 Medx introduces 24/7 video consultations • Fast-track appointments now available • Next Update: Get lab results directly on your dashboard •
+          🔴 Next Update : Medx introduces 24/7 video consultations • Fast-track appointments now available • Get lab results directly on your dashboard •
         </motion.div>
       </div>
 
