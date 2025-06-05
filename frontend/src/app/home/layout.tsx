@@ -147,6 +147,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </li>
                 )}
               </ul>
+              <ul className="space-y-4 mt-4">
+              {user?.role === RoleNamesEnum.ADMIN && (
+                  <li>
+                    <button
+                      onClick={() => handleNavigate("/home/create/properties")}
+                      className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
+                    >
+                      🏠 Management
+                    </button>
+                  </li>
+                )}
+              </ul>
 
               <button
                 onClick={() => setMenuOpen(false)}
