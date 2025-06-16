@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGetSpecilityDepartmentQuery } from "@/store/services/api/hospitalApi";
+import { useAddDepartmentMutation, useAddSpecialityMutation, useGetSpecilityDepartmentQuery } from "@/store/services/api/hospitalApi";
 
 type SpecilityDepartmentResponse = {
   speciality: any[];
@@ -20,7 +20,9 @@ const DepartmentSpecialtyPage = () => {
     data: SpecilityDepartmentResponse | undefined;
   };
 
-  console.log(SpecilityDepartment);
+  const [addDepartment] = useAddDepartmentMutation();
+const [addSpeciality] = useAddSpecialityMutation();
+
 
   useEffect(() => {
     if (SpecilityDepartment) {
@@ -29,17 +31,25 @@ const DepartmentSpecialtyPage = () => {
     }
   }, [SpecilityDepartment]);
 
-  const handleAddDepartment = () => {
+  const handleAddDepartment = async () => {
     if (departmentName.trim()) {
-      setDepartments((prev) => [...prev, departmentName.trim()]);
-      setDepartmentName("");
+      try {
+        await addDepartment({ departmentname: departmentName.trim() }).unwrap();
+        setDepartmentName("");
+      } catch (error) {
+        console.error("Failed to add department:", error);
+      }
     }
   };
 
-  const handleAddSpecialty = () => {
+  const handleAddSpecialty = async () => {
     if (specialtyName.trim()) {
-      setSpecialties((prev) => [...prev, specialtyName.trim()]);
-      setSpecialtyName("");
+      try {
+        await addSpeciality({ specialtyname: specialtyName.trim() }).unwrap();
+        setSpecialtyName("");
+      } catch (error) {
+        console.error("Failed to add specialty:", error);
+      }
     }
   };
 
@@ -47,6 +57,8 @@ const DepartmentSpecialtyPage = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
+  
 
   return (
     <motion.div
@@ -96,21 +108,21 @@ const DepartmentSpecialtyPage = () => {
 
           <h3 className="text-md font-semibold mb-2">Department List:</h3>
           <ul className="space-y-2">
-            <AnimatePresence>
-              {departments.map((dept, index) => (
-                <motion.li
-                  key={dept.departmentid || index}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center justify-between bg-blue-50 hover:bg-blue-100 text-blue-800 px-4 py-2 rounded-md shadow-sm"
-                >
-                  <span className="font-medium">{dept.departmentname}</span>
-                </motion.li>
-              ))}
-            </AnimatePresence>
-          </ul>
+  <AnimatePresence>
+    {departments.map((dept, index) => (
+      <motion.li
+        key={dept.departmentid || index}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        transition={{ duration: 0.2 }}
+        className="flex items-center justify-between bg-blue-50 hover:bg-blue-100 text-blue-800 px-4 py-2 rounded-md shadow-sm"
+      >
+        <span className="font-medium">{dept.departmentname}</span>
+      </motion.li>
+    ))}
+  </AnimatePresence>
+</ul>
         </motion.div>
 
         {/* Specialty Section */}

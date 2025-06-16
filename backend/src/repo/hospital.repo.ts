@@ -96,7 +96,7 @@ class HospitalRepo {
         try { 
             const query = {
                 text: `INSERT INTO specialty (specialtyname) VALUES ($1)  RETURNING *;`,
-                values: [data.SpecialityName],
+                values: [data.specialtyname],
             };  
           const result = await client.query(query);
           return result.rows[0];  
@@ -110,7 +110,7 @@ class HospitalRepo {
         try { 
             const query = {
                 text: `INSERT INTO department (departmentname) VALUES ($1)  RETURNING *;`,
-                values: [data.DepartmentName],
+                values: [data.departmentname],
             };  
           const result = await client.query(query);
           return result.rows[0];  
