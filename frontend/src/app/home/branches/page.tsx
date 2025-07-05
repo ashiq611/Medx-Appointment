@@ -85,7 +85,7 @@ const [deleteBranch] = useDeleteBranchMutation();
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
-      <h1 className="text-2xl font-bold mb-6 text-center">Hospital Branches</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-blue-800">Hospital Branches</h1>
       {
         RoleNamesEnum.ADMIN === user?.role &&(
           <button
@@ -109,7 +109,7 @@ const [deleteBranch] = useDeleteBranchMutation();
             transition={{ delay: i * 0.1 }}
             onClick={() => handleClick(branch.hospitalbranchid)}
           >
-            <h2 className="text-xl font-semibold">{branch.branchname}</h2>
+            <h2 className="text-xl font-semibold text-teal-800">{branch.branchname}</h2>
             <p className="text-gray-700">🏥 {branch.hospitalname}</p>
             <p className="text-gray-600 mt-1">📍 {branch.location}</p>
             <p className="text-gray-600 mt-1">📞 {branch.contactinformation}</p>

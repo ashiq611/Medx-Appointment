@@ -57,7 +57,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText,
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
         handleChange(field.name, e.target.value),
       placeholder: field.placeholder,
-      className: `border-2 rounded-lg p-3 focus:outline-none focus:ring-2 w-full ${
+      className: `border-2 rounded-lg p-3 focus:outline-none focus:ring-2 w-full text-black ${
         errors[field.name] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
       }`,
     };

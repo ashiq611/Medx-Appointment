@@ -76,7 +76,7 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
-      <h1 className="text-2xl font-bold mb-6 text-center">Doctor List</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-blue-800">Doctor List</h1>
        {
               RoleNamesEnum.ADMIN === user?.role &&(
                 <button
@@ -104,7 +104,7 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
           }}
           // onClick={() => router.push(`/doctor/${doctor.doctorid}`)}
         >
-          <h2 className="text-lg font-semibold">{doctor.doctorName}</h2>
+          <h2 className="text-lg font-semibold text-teal-800">{doctor.doctorName}</h2>
           <p className="text-gray-500">{doctor.specialtyname}</p>
           <p className="text-sm">{doctor.contactinformation}</p>
           <p className="text-sm italic text-gray-600">

@@ -87,7 +87,7 @@ export default function RegisterForm() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <p>
+          <p className="text-teal-800">
             Already have an account?{" "}
             <a href="/login" className="text-green-600 font-semibold hover:underline">
               Login

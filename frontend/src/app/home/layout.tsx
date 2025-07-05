@@ -9,7 +9,11 @@ import { UserloggedOut } from "@/store/services/slices/authSlice";
 import { toast } from "react-toastify";
 import { RoleNamesEnum } from "../constant/formFeilds";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const router = useRouter();
@@ -53,7 +57,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
           </svg>
         </button>
 
@@ -80,11 +88,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 transition={{ duration: 0.2 }}
                 className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-xl p-4 z-50"
               >
-                <h3 className="font-bold text-lg text-blue-700 mb-2">👤 Profile</h3>
+                <h3 className="font-bold text-lg text-blue-700 mb-2">
+                  👤 Profile
+                </h3>
                 <div className="text-sm text-gray-700 space-y-1 mb-4">
-                  <p><span className="font-semibold">Name:</span> {user?.name}</p>
-                  <p><span className="font-semibold">Phone:</span> {user?.phone_number}</p>
-                  <p><span className="font-semibold">Role:</span> {user?.role}</p>
+                  <p>
+                    <span className="font-semibold">Name:</span> {user?.name}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Phone:</span>{" "}
+                    {user?.phone_number}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Role:</span> {user?.role}
+                  </p>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -109,63 +126,79 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-gradient-to-b from-blue-100 to-blue-300 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-40"
+            onClick={() => setMenuOpen(false)}
           >
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
-              className="bg-white rounded-2xl shadow-lg p-8 w-[90%] max-w-md"
+              className="relative bg-white rounded-2xl shadow-lg p-6 w-[90%] max-w-md"
+              onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-lg font-bold mb-4 text-center">Menu</h2>
-              <ul className="space-y-4">
+              {/* Close Button (Top Right with ✖ icon) */}
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+                aria-label="Close Menu"
+              >
+                ✖
+              </button>
+
+              <h2 className="text-lg font-bold mb-6 text-center text-teal-800">Menu</h2>
+
+              {/* Grid Menu */}
+              <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <li>
                   <button
                     onClick={() => handleNavigate("/home")}
-                    className="w-full bg-red-600 text-white py-2 rounded-xl hover:bg-red-700"
+                    className="w-32 h-32 bg-red-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-red-700 flex flex-col items-center justify-center transition-all duration-300"
                   >
-                    🏠 Home
+                    🏠
+                    <br />
+                    Home
                   </button>
                 </li>
+
                 {user?.role !== RoleNamesEnum.DOCTOR && (
                   <li>
                     <button
                       onClick={() => handleNavigate("/home/branches")}
-                      className="w-full bg-yellow-600 text-white py-2 rounded-xl hover:bg-yellow-700"
+                      className="w-32 h-32 bg-yellow-500 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-yellow-600 flex flex-col items-center justify-center transition-all duration-300"
                     >
-                      🏥 Branches
+                      🏥
+                      <br />
+                      Branches
                     </button>
                   </li>
                 )}
-                {user?.role === RoleNamesEnum.ADMIN && (
-                  <li>
-                    <button
-                      onClick={() => handleNavigate("/home/create/user")}
-                      className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
-                    >
-                      🧑‍⚕️ Add User
-                    </button>
-                  </li>
-                )}
-              </ul>
-              <ul className="space-y-4 mt-4">
-              {user?.role === RoleNamesEnum.ADMIN && (
-                  <li>
-                    <button
-                      onClick={() => handleNavigate("/home/create/properties")}
-                      className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
-                    >
-                      🏠 Management
-                    </button>
-                  </li>
-                )}
-              </ul>
 
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="mt-6 w-full bg-gray-300 text-gray-800 py-2 rounded-xl hover:bg-gray-400"
-              >
-                Close
-              </button>
+                {user?.role === RoleNamesEnum.ADMIN && (
+                  <>
+                    <li>
+                      <button
+                        onClick={() => handleNavigate("/home/create/user")}
+                        className="w-32 h-32 bg-blue-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-blue-700 flex flex-col items-center justify-center transition-all duration-300"
+                      >
+                        🧑‍⚕️
+                        <br />
+                        Add User
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() =>
+                          handleNavigate("/home/create/properties")
+                        }
+                        className="w-32 h-32 bg-green-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-green-700 flex flex-col items-center justify-center transition-all duration-300"
+                      >
+                        🏠
+                        <br />
+                        Management
+                      </button>
+                    </li>
+                  </>
+                )}
+              </ul>
             </motion.div>
           </motion.div>
         )}

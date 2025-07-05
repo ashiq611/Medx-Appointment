@@ -44,7 +44,7 @@ export const UserTable: React.FC<Props> = ({
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">User List</h2>
+        <h2 className="text-2xl font-semibold text-blue-800">User List</h2>
         <button
           onClick={() => setIsModalOpen(!isModalOpen)}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
@@ -61,10 +61,10 @@ export const UserTable: React.FC<Props> = ({
       >
         <thead className="bg-gray-100">
           <tr>
-            <th className="p-3 border-b">Name</th>
-            <th className="p-3 border-b">Role</th>
-            <th className="p-3 border-b">Phone</th>
-            <th className="p-3 border-b">Contact Info</th>
+            <th className="p-3 border-b text-teal-800">Name</th>
+            <th className="p-3 border-b text-teal-800">Role</th>
+            <th className="p-3 border-b text-teal-800">Phone</th>
+            <th className="p-3 border-b text-teal-800">Contact Info</th>
           </tr>
         </thead>
         <tbody>
@@ -76,10 +76,10 @@ export const UserTable: React.FC<Props> = ({
               transition={{ delay: idx * 0.05 }}
               className="border-t hover:bg-gray-50"
             >
-              <td className="p-3">{user.name}</td>
-              <td className="p-3">{user.role}</td>
-              <td className="p-3">{user.phone_number}</td>
-              <td className="p-3">{user.contactinformation}</td>
+              <td className="p-3 text-black">{user.name}</td>
+              <td className="p-3 text-cyan-800">{user.role}</td>
+              <td className="p-3 text-black">{user.phone_number}</td>
+              <td className="p-3 text-black">{user.contactinformation}</td>
             </motion.tr>
           ))}
         </tbody>

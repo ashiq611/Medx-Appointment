@@ -94,7 +94,7 @@ const [addSpeciality] = useAddSpecialityMutation();
               value={departmentName}
               onChange={(e) => setDepartmentName(e.target.value)}
               placeholder="Enter department name"
-              className="flex-grow px-4 py-2 border rounded-md"
+              className="flex-grow px-4 py-2 border rounded-md text-black"
               whileFocus={{ scale: 1.02 }}
             />
             <motion.button
@@ -106,7 +106,7 @@ const [addSpeciality] = useAddSpecialityMutation();
             </motion.button>
           </div>
 
-          <h3 className="text-md font-semibold mb-2">Department List:</h3>
+          <h3 className="text-md font-semibold mb-2 text-teal-800">Department List:</h3>
           <ul className="space-y-2">
   <AnimatePresence>
     {departments.map((dept, index) => (
@@ -141,7 +141,7 @@ const [addSpeciality] = useAddSpecialityMutation();
               value={specialtyName}
               onChange={(e) => setSpecialtyName(e.target.value)}
               placeholder="Enter specialty name"
-              className="flex-grow px-4 py-2 border rounded-md"
+              className="flex-grow px-4 py-2 border rounded-md text-black"
               whileFocus={{ scale: 1.02 }}
             />
             <motion.button
@@ -153,7 +153,7 @@ const [addSpeciality] = useAddSpecialityMutation();
             </motion.button>
           </div>
 
-          <h3 className="text-md font-semibold mb-2">Specialty List:</h3>
+          <h3 className="text-md font-semibold mb-2 text-teal-800">Specialty List:</h3>
           <ul className="space-y-2">
             <AnimatePresence>
               {specialties.map((spec, index) => (

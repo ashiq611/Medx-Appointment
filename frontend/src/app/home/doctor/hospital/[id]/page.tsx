@@ -33,6 +33,10 @@ function DoctorProfilePage() {
   const [patientName, setPatientName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
+const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
+
+
   
 
 
@@ -123,22 +127,21 @@ function DoctorProfilePage() {
       }
     };
 
-
-    const handleDeleteSchedule = async (scheduleid: string) => {
-      const confirm = window.confirm("Are you sure you want to delete this schedule?");
-      if (!confirm) return;
-    
+    const confirmDeleteSchedule = async () => {
+      if (!scheduleToDelete) return;
       try {
-        await deleteSchedule(scheduleid).unwrap();
+        await deleteSchedule(scheduleToDelete).unwrap();
         toast.success("Schedule deleted successfully!");
         setSelectedSchedule(null);
         setSelectedDate('');
       } catch (error) {
         console.error(error);
         toast.error("Failed to delete schedule.");
+      } finally {
+        setDeleteConfirmModal(false);
+        setScheduleToDelete(null);
       }
     };
-
 
   return (
     <motion.div
@@ -147,7 +150,7 @@ function DoctorProfilePage() {
       animate={{ opacity: 1, y: 0 }}
     >
       <div className="flex items-center justify-between">
-      <h1 className="text-2xl font-bold mb-6 text-center">Doctor Details</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-blue-800">Doctor Details</h1>
        {
               RoleNamesEnum.ADMIN === user?.role &&(
                 <button
@@ -164,7 +167,7 @@ function DoctorProfilePage() {
      
 
       </div>
-      <h2 className="text-2xl font-bold mb-2">{doctor.doctorName}</h2>
+      <h2 className="text-2xl font-bold mb-2 text-teal-800">{doctor.doctorName}</h2>
       <p className="text-gray-600 mb-1">Specialty: {doctor.specialtyname}</p>
       <p className="text-gray-600 mb-1">Department: {doctor.departmentname}</p>
       <p className="text-gray-600 mb-1">Branch: {doctor.branchname}</p>
@@ -175,34 +178,34 @@ function DoctorProfilePage() {
     {(user?.role === "Receptionist" || user?.role === "Admin") && (
       <>
         {/* Patient Name Input */}
-        <h3 className="text-lg font-semibold mb-2">Patient Name</h3>
+        <h3 className="text-lg font-semibold mb-2 text-black">Patient Name</h3>
         <input
           type="text"
           value={patientName}
           onChange={(e) => setPatientName(e.target.value)}
           placeholder="Enter Patient Name"
-          className="border rounded-lg px-3 py-2 mb-4 w-full"
+          className="border rounded-lg px-3 py-2 mb-4 w-full text-black"
         />
 
         {/* Patient Phone Number Input */}
-        <h3 className="text-lg font-semibold mb-2">Phone Number</h3>
+        <h3 className="text-lg font-semibold mb-2 text-black">Phone Number</h3>
         <input
           type="text"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Enter Phone Number"
-          className="border rounded-lg px-3 py-2 mb-4 w-full"
+          className="border rounded-lg px-3 py-2 mb-4 w-full text-black"
         />
 
         {/* Schedule Selection */}
-        <h3 className="text-lg font-semibold mb-2">Schedule <span className='text-red-500 text-xs font-mono'>Please select a Schedule</span></h3>
+        <h3 className="text-lg font-semibold mb-2 text-teal-800">Schedule <span className='text-red-500 text-xs font-mono'>Please select a Schedule</span></h3>
         {upcomingSchedules.length === 0 ? (
           <p>No available schedules in the next 7 days.</p>
         ) : (
           upcomingSchedules.map(({ date, schedule }) => (
             <motion.div
               key={`${schedule.scheduleid}-${date}`}
-              className={`p-3 rounded-lg mb-2 cursor-pointer ${
+              className={`p-3 rounded-lg mb-2 cursor-pointer text-black ${
                 selectedSchedule?.scheduleid === schedule.scheduleid && selectedDate === date
                   ? 'bg-blue-100 border border-blue-400'
                   : 'bg-gray-100'
@@ -220,7 +223,8 @@ function DoctorProfilePage() {
   className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
   onClick={(e) => {
     e.stopPropagation(); // Prevent selecting schedule
-    handleDeleteSchedule(schedule.scheduleid);
+    setScheduleToDelete(schedule.scheduleid);
+    setDeleteConfirmModal(true);
   }}
 >
   Delete
@@ -241,6 +245,31 @@ function DoctorProfilePage() {
         {message && <p className="mt-4 text-center text-green-700">{message}</p>}
       </>
     )}
+
+<Modal isOpen={deleteConfirmModal} onClose={() => setDeleteConfirmModal(false)}>
+  <div className="p-4">
+    <h2 className="text-lg font-semibold text-center mb-4">Are you sure you want to delete this schedule?</h2>
+    <div className="flex justify-center gap-4">
+      <button
+        onClick={confirmDeleteSchedule}
+        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+      >
+        Yes, Delete
+      </button>
+      <button
+        onClick={() => {
+          setDeleteConfirmModal(false);
+          setScheduleToDelete(null);
+        }}
+        className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</Modal>
+
+
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
            <DynamicForm fields={filteredScheduleFields} onSubmit={handleSubmit} buttonText="Add Branch" headText="Add Schedule"/>
           </Modal>
