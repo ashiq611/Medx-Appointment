@@ -112,13 +112,13 @@ export const generateDoctorFields = (
 export const branchFields = [
   {
     label: "Branch Name",
-    name: "BranchName",
+    name: "branchname",
     type: "string",
     required: true,
   },
   {
     label: "Location",
-    name: "Location",
+    name: "location",
     type: "string",
     required: true,
   },

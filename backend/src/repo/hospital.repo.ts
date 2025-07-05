@@ -43,9 +43,10 @@ class HospitalRepo {
       }
       async addBranch(client: any,data: any) {
         try { 
+          console.log("branch", data)
             const query = {
                 text: `INSERT INTO HospitalBranch (branchname, location,contactinformation, hospitalid) VALUES ($1, $2, $3, $4)  RETURNING *;`,
-                values: [data.BranchName, data.Location, data.contactinformation, data.HospitalID],
+                values: [data.branchname, data.location, data.contactinformation, data.HospitalID],
             };  
           const result = await client.query(query);
           return result.rows[0];  
@@ -53,6 +54,32 @@ class HospitalRepo {
           console.log(err);
         }
     
+      }
+
+      async updateBranch(client: any,data: any) {
+        try { 
+            const query = {
+                text: `UPDATE HospitalBranch SET branchname = $1, location = $2, contactinformation = $3 WHERE hospitalbranchid = $4 RETURNING *;`,
+                values: [data.branchname, data.location, data.contactinformation, data.hospitalbranchid],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      async deleteBranch(client: any,branchid: any) {
+        try {
+            const query = {
+                text: `DELETE FROM HospitalBranch WHERE hospitalbranchid = $1 RETURNING *;`,
+                values: [branchid],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
       }
 
       async getHospitalId(client: any, hospitalbranchid: any) {

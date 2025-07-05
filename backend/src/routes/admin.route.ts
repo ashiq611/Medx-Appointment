@@ -15,6 +15,8 @@ router.get('/get-appointment', expressAsyncHandler(adminController.getAppointmen
 router.post('/appointment', expressAsyncHandler(adminController.createAppointment));
 router.post('/add-doctor', expressAsyncHandler(adminController.addDoctor));
 router.post('/add-branch', expressAsyncHandler(adminController.addBranch));
+router.put('/update-branch', expressAsyncHandler(adminController.updateBranch));
+router.delete('/delete-branch/:branchid', expressAsyncHandler(adminController.deleteBranch));
 // router.post('/add-hospital', expressAsyncHandler(adminController.addHospital));
 router.get('/get-speciality-department', expressAsyncHandler(adminController.getSpecialityDepartment));
 router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality));

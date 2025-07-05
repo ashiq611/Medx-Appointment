@@ -2,7 +2,7 @@
 
 import { setFieldValue } from '@/store/services/slices/formSlice';
 import { RootState } from '@/store/store';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 interface Field {
@@ -19,9 +19,10 @@ interface DynamicFormProps {
   onSubmit: (data: { [key: string]: any }) => void;
   buttonText: string;
   headText?: string;
+  initialValues?: { [key: string]: any };
 }
 
-const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText, headText = "Login Page" }) => {
+const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText, headText = "Login Page", initialValues}) => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -96,6 +97,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText,
         return <input type={field.type} {...commonProps} />;
     }
   };
+
+  useEffect(() => {
+    if (initialValues) {
+      Object.entries(initialValues).forEach(([key, value]) => {
+        dispatch(setFieldValue({ key, value }));
+      });
+    }
+  }, [initialValues, dispatch]);
 
   return (
     <form

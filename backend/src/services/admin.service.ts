@@ -156,6 +156,32 @@ class AdminService {
         }
     }
 
+    async updateBranch(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.updateBranch(client, data);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async deleteBranch(branchid: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.deleteBranch(client, branchid);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
     async getSpecialityDepartment() {
         const client = await pool.connect();
         try {

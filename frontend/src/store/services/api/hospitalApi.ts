@@ -23,6 +23,29 @@ export const hospitalApi = Api.injectEndpoints({
       }),
       invalidatesTags: ["Branch"],
     }),
+    updateBranch: builder.mutation<any, any>({
+      query: (body) => ({
+        url: "/admin/update-branch",
+        method: "PUT",
+        body,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["Branch"],
+    }),
+    deleteBranch: builder.mutation<any, string>({
+      query: (branchid) => ({
+        url: `/admin/delete-branch/${branchid}`,
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["Branch"],
+    }),
     getSpecilityDepartment: builder.query<any[], void>({
       query: () => ({
         url: "/admin/get-speciality-department",
@@ -80,4 +103,4 @@ export const hospitalApi = Api.injectEndpoints({
   }),
 });
 
-export const { useGetBranchesQuery, useAddBranchMutation, useGetSpecilityDepartmentQuery, useAddUserMutation, useGetUserQuery, useAddDepartmentMutation, useAddSpecialityMutation } = hospitalApi;
+export const { useGetBranchesQuery, useAddBranchMutation, useUpdateBranchMutation, useDeleteBranchMutation, useGetSpecilityDepartmentQuery, useAddUserMutation, useGetUserQuery, useAddDepartmentMutation, useAddSpecialityMutation } = hospitalApi;

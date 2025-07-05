@@ -66,6 +66,39 @@ class AdminController {
         }
     }
 
+    updateBranch: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.updateBranch(req.body)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    deleteBranch: RequestHandler = async (req, res) => {
+        try {
+            console.log(req.params.branchid)
+            const result = await adminService.deleteBranch(req.params.branchid)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
     getSpecialityDepartment: RequestHandler = async (req, res) => {
         try {
             const result = await adminService.getSpecialityDepartment()
