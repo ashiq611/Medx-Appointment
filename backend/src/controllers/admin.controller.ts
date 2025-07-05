@@ -164,10 +164,42 @@ class AdminController {
         }
     }
 
+    updateSpeciality: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.updateSpeciality(req.body)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
     addDepartment: RequestHandler = async (req, res) => {
         try {
             const result = await adminService.addDepartment(req.body)
             res.status(201).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    updateDepartment: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.updateDepartment(req.body)
+            res.status(200).json({
                 success: true,
                 data: result
             })

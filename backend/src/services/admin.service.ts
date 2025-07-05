@@ -240,10 +240,36 @@ class AdminService {
         }
     }
 
+    async updateSpeciality(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.updateSpeciality(client, data);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
     async addDepartment(data: any) {
         const client = await pool.connect();
         try {
             const result = await hospitalRepo.addDepartment(client, data);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async updateDepartment(data: any) {
+        const client = await pool.connect();
+        try {
+            const result = await hospitalRepo.updateDepartment(client, data);
             return result;
         } catch (err) {
             console.log(err);

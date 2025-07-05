@@ -133,6 +133,19 @@ class HospitalRepo {
     
       }
 
+      async updateSpeciality(client: any,data: any) {
+        try { 
+            const query = {
+                text: `UPDATE specialty SET specialtyname = $1 WHERE specialtyid = $2 RETURNING *;`,
+                values: [data.specialtyname, data.specialtyid],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
       async addDepartment(client: any,data: any) {
         try { 
             const query = {
@@ -145,6 +158,19 @@ class HospitalRepo {
           console.log(err);
         }
     
+      }
+
+      async updateDepartment(client: any,data: any) {
+        try { 
+            const query = {
+                text: `UPDATE department SET departmentname = $1 WHERE departmentid = $2 RETURNING *;`,
+                values: [data.departmentname, data.departmentid],
+            };  
+          const result = await client.query(query);
+          return result.rows[0];  
+        } catch (err) {
+          console.log(err);
+        }
       }
 
 }

@@ -22,7 +22,9 @@ router.delete('/delete-branch/:branchid', expressAsyncHandler(adminController.de
 // router.post('/add-hospital', expressAsyncHandler(adminController.addHospital));
 router.get('/get-speciality-department', expressAsyncHandler(adminController.getSpecialityDepartment));
 router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality));
+router.put('/update-speciality', expressAsyncHandler(adminController.updateSpeciality));
 router.post('/add-department', expressAsyncHandler(adminController.addDepartment));
+router.put('/update-department', expressAsyncHandler(adminController.updateDepartment));
 router.post('/add-schedule', expressAsyncHandler(adminController.addSchedule));
 router.delete('/delete-schedule/:scheduleid', expressAsyncHandler(adminController.deleteSchedule));
 router.post('/add-user', expressAsyncHandler(adminController.addUser));
