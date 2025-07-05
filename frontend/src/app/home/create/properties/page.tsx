@@ -11,10 +11,10 @@ type SpecilityDepartmentResponse = {
 
 const DepartmentSpecialtyPage = () => {
   const [departmentName, setDepartmentName] = useState("");
-  const [departments, setDepartments] = useState<string[]>([]);
+  const [departments, setDepartments] = useState<{ departmentid: string; departmentname: string }[]>([]);
 
   const [specialtyName, setSpecialtyName] = useState("");
-  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [specialties, setSpecialties] = useState<{ specialtyid: string; specialtyname: string }[]>([]);
 
   const { data: SpecilityDepartment } = useGetSpecilityDepartmentQuery() as {
     data: SpecilityDepartmentResponse | undefined;
