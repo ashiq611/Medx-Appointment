@@ -64,13 +64,13 @@ export const generateDoctorFields = (
 ) => [
   {
     label: "Doctor Name",
-    name: "name",
+    name: "doctorName",
     type: "string",
     required: true,
   },
   {
     label: "Phone Number",
-    name: "phone_number",
+    name: "contactinformation",
     type: "string",
     required: true,
   },

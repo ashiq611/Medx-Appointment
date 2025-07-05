@@ -143,6 +143,33 @@ class AdminService {
             client.release();
         }
     } 
+
+    async updateDoctor(user: any) {
+        const client = await pool.connect();
+        try {
+            const result = await doctorRepo.updateDoctor(client, user);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async deleteDoctor(doctorid: any) {
+        const client = await pool.connect();
+        try {
+            console.log("service id", doctorid);
+            const result = await doctorRepo.deleteDoctor(client, doctorid);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
     async addBranch(data: any) {
         const client = await pool.connect();
         try {
@@ -249,6 +276,19 @@ class AdminService {
                 message: "Something went wrong"
             };
         } finally {
+            client.release();
+        }
+    }
+
+    async deleteSchedule(scheduleid: any) {
+        const client = await pool.connect();
+        try {
+            const result = await doctorRepo.deleteSchedule(client, scheduleid);
+            return result;
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
             client.release();
         }
     }

@@ -165,7 +165,7 @@ const [deleteBranch] = useDeleteBranchMutation();
   <DynamicForm
     fields={branchFields}
     onSubmit={handleSubmit}
-    initialValues={selectedBranch ?? undefined} // 👈 pass data for edit
+    initialValues={selectedBranch ?? undefined}
     buttonText={selectedBranch ? "Update Branch" : "Add Branch"}
     headText={selectedBranch ? "Edit Branch" : "Add Branch"}
   />

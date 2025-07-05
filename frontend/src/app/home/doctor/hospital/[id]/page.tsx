@@ -1,11 +1,11 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useAddScheduleMutation, useGetDoctorDetailsQuery } from '@/store/services/api/doctorApi';
+import { useAddScheduleMutation, useDeleteScheduleMutation, useGetDoctorDetailsQuery } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {  useHospitalAddAppointmentMutation } from '@/store/services/api/appointmentApi';
-import { getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
+import { allDays, getUpcomingAvailableSchedules } from '@/utils/dayWiseDate';
 import { useRouter } from "next/navigation";
 import { useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
@@ -23,6 +23,7 @@ function DoctorProfilePage() {
   const { data, isLoading } = useGetDoctorDetailsQuery(id as string);
   const [HospitalAddAppointment] = useHospitalAddAppointmentMutation();
   const [addSchedule] = useAddScheduleMutation();
+  const [deleteSchedule] = useDeleteScheduleMutation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState('');
@@ -70,9 +71,27 @@ function DoctorProfilePage() {
     }
   };
   let upcomingSchedules: any[] = [];
+  let scheduledDays: any[] = [];
   if (doctor) {
     upcomingSchedules = getUpcomingAvailableSchedules(doctor.scheduleList);
+    scheduledDays = doctor?.scheduleList?.map((s: any) => s.day) || [];
   }
+  
+  const availableDays = allDays.filter(
+    (day) => !scheduledDays.includes(day.value)
+  );
+
+
+  const filteredScheduleFields = [
+    {
+      name: 'day',
+      label: 'Day',
+      type: 'select',
+      options: availableDays,
+      required: true,
+    },
+    ...scheduleFeilds.slice(1), // remove original 'day' field and reuse rest
+  ];
 
   const handleClick = (id: any) => {
     router.push(`/home/appointments/${id}`);
@@ -105,6 +124,22 @@ function DoctorProfilePage() {
     };
 
 
+    const handleDeleteSchedule = async (scheduleid: string) => {
+      const confirm = window.confirm("Are you sure you want to delete this schedule?");
+      if (!confirm) return;
+    
+      try {
+        await deleteSchedule(scheduleid).unwrap();
+        toast.success("Schedule deleted successfully!");
+        setSelectedSchedule(null);
+        setSelectedDate('');
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to delete schedule.");
+      }
+    };
+
+
   return (
     <motion.div
       className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-8"
@@ -116,7 +151,10 @@ function DoctorProfilePage() {
        {
               RoleNamesEnum.ADMIN === user?.role &&(
                 <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
                 className="px-4 py-1 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700"
               >
                 Add Schedule
@@ -178,6 +216,15 @@ function DoctorProfilePage() {
               <p><strong>Date:</strong> {date}</p>
               <p><strong>Day:</strong> {schedule.day}</p>
               <p><strong>Time:</strong> {schedule.startslot} - {schedule.endslot}</p>
+              <button
+  className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent selecting schedule
+    handleDeleteSchedule(schedule.scheduleid);
+  }}
+>
+  Delete
+</button>
             </motion.div>
           ))
         )}
@@ -195,7 +242,7 @@ function DoctorProfilePage() {
       </>
     )}
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-           <DynamicForm fields={scheduleFeilds} onSubmit={handleSubmit} buttonText="Add Branch" headText="Add Schedule"/>
+           <DynamicForm fields={filteredScheduleFields} onSubmit={handleSubmit} buttonText="Add Branch" headText="Add Schedule"/>
           </Modal>
     </motion.div>
   );

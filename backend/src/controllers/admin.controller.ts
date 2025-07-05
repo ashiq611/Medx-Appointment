@@ -50,6 +50,39 @@ class AdminController {
         }
     }
 
+    updateDoctor: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.updateDoctor(req.body)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
+    deleteDoctor: RequestHandler = async (req, res) => {
+        try {
+            console.log(req.params.doctorid, "req.params.doctorid")
+            const result = await adminService.deleteDoctor(req.params.doctorid)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
     addBranch: RequestHandler = async (req, res) => {
         try {
             const result = await adminService.addBranch(req.body)
@@ -168,6 +201,22 @@ class AdminController {
                 success: false,
                 message: "Internal Server Error"
             });
+        }
+    }
+
+    deleteSchedule: RequestHandler = async (req, res) => {
+        try {
+            const result = await adminService.deleteSchedule(req.params.scheduleid)
+            res.status(200).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
         }
     }
 

@@ -14,6 +14,8 @@ router.get('/get-all-schedules/:doctorid?', expressAsyncHandler(userController.g
 router.get('/get-appointment', expressAsyncHandler(adminController.getAppointment));
 router.post('/appointment', expressAsyncHandler(adminController.createAppointment));
 router.post('/add-doctor', expressAsyncHandler(adminController.addDoctor));
+router.put('/update-doctor', expressAsyncHandler(adminController.updateDoctor));
+router.delete('/delete-doctor/:doctorid', expressAsyncHandler(adminController.deleteDoctor));
 router.post('/add-branch', expressAsyncHandler(adminController.addBranch));
 router.put('/update-branch', expressAsyncHandler(adminController.updateBranch));
 router.delete('/delete-branch/:branchid', expressAsyncHandler(adminController.deleteBranch));
@@ -22,6 +24,7 @@ router.get('/get-speciality-department', expressAsyncHandler(adminController.get
 router.post('/add-speciality', expressAsyncHandler(adminController.addSpeciality));
 router.post('/add-department', expressAsyncHandler(adminController.addDepartment));
 router.post('/add-schedule', expressAsyncHandler(adminController.addSchedule));
+router.delete('/delete-schedule/:scheduleid', expressAsyncHandler(adminController.deleteSchedule));
 router.post('/add-user', expressAsyncHandler(adminController.addUser));
 router.get('/get-all-admin-reception', expressAsyncHandler(adminController.getAllAdminReception));
 

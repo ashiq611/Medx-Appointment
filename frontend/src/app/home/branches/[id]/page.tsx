@@ -2,9 +2,9 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useAddDoctorMutation, useGetBranchDoctorsQuery } from '@/store/services/api/doctorApi';
+import { useAddDoctorMutation, useDeleteDoctorMutation, useGetBranchDoctorsQuery, useUpdateDoctorMutation } from '@/store/services/api/doctorApi';
 import { motion } from 'framer-motion';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loading from '@/components/Loading';
 import { useState } from 'react';
 import Modal from '@/components/modal';
@@ -13,6 +13,7 @@ import { useGetSpecilityDepartmentQuery } from '@/store/services/api/hospitalApi
 import { generateDoctorFields, RoleNamesEnum } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 import { withAuth } from '@/hoc/withAuth';
+import { resetForm } from '@/store/services/slices/formSlice';
 
 
 type SpecilityDepartmentResponse = {
@@ -22,7 +23,11 @@ type SpecilityDepartmentResponse = {
 
 
 function BranchDetailPage() {
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<any | null>(null);
+const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const { id } = useParams();
   const router = useRouter();
     const { user } = useSelector((state: any) => state.auth);
@@ -31,9 +36,13 @@ function BranchDetailPage() {
     data: SpecilityDepartmentResponse | undefined;
   };
   const [addDoctor] = useAddDoctorMutation();
+  const [updateDoctor] = useUpdateDoctorMutation();
+const [deleteDoctor] = useDeleteDoctorMutation();
 
  const speciality = SpecilityDepartment?.speciality
 const department = SpecilityDepartment?.department;
+
+console.log("selectedDoctor", selectedDoctor);
 
 
 const addDoctorFeild = speciality && department ? generateDoctorFields(speciality, department) : [];
@@ -44,17 +53,23 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
     try {
       const finalData = {
         ...data,
-        hospitalbranchid: id
+        hospitalbranchid: id,
+      };
+  
+      if (selectedDoctor) {
+        await updateDoctor({ ...finalData, doctorid: selectedDoctor.doctorid }).unwrap();
+        toast.success("Doctor updated successfully!");
+      } else {
+        await addDoctor(finalData).unwrap();
+        toast.success("Doctor added successfully!");
       }
-      await addDoctor(finalData)
-      .then(() => {
-        setIsModalOpen(false);
-        toast.success('Doctor added successfully!')
-        refetch();
-      })
+  
+      setIsModalOpen(false);
+      setSelectedDoctor(null);
+      refetch();
     } catch (error) {
       console.error(error);
-      alert('Failed to add branch');
+      toast.error("Failed to submit form.");
     }
   };
 
@@ -95,12 +110,86 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
           <p className="text-sm italic text-gray-600">
             {doctor.departmentname}, {doctor.hospitalname} ({doctor.branchname})
           </p>
+          <div className="flex justify-between mt-4">
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setSelectedDoctor(doctor);
+      setIsModalOpen(true);
+    }}
+    className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded"
+  >
+    Edit
+  </button>
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setDeleteTargetId(doctor.doctorid);
+      setDeleteModalOpen(true);
+    }}
+    className="ml-2 bg-red-500 text-white px-3 py-1 rounded"
+  >
+    Delete
+  </button>
+</div>
         </motion.div>
       ))}
     </div>
-    <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-    <DynamicForm fields={addDoctorFeild} onSubmit={handleSubmit} buttonText="Add Doctor" headText="Add Doctor"/>
-          </Modal>
+    <Modal
+  isOpen={deleteModalOpen}
+  onClose={() => {
+    dispatch(resetForm());
+    setDeleteModalOpen(false);
+    setDeleteTargetId(null);
+  }}
+>
+  <div className="p-4 text-center">
+    <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
+    <p className="mb-6 text-gray-600">Are you sure you want to delete this doctor?</p>
+    <div className="flex justify-center gap-4">
+      <button
+        onClick={() => setDeleteModalOpen(false)}
+        className="bg-gray-300 px-4 py-2 rounded"
+      >
+        Cancel
+      </button>
+      <button
+        onClick={async () => {
+          try {
+            await deleteDoctor(deleteTargetId as string)
+            toast.success("Doctor deleted successfully!");
+            setDeleteModalOpen(false);
+            refetch();
+          } catch (error) {
+            toast.error("Failed to delete doctor.");
+            console.error(error);
+          }
+        }}
+        className="bg-red-600 text-white px-4 py-2 rounded"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</Modal>
+
+
+    <Modal
+  isOpen={isModalOpen}
+  onClose={() => {
+    dispatch(resetForm());
+    setIsModalOpen(false);
+    setSelectedDoctor(null);
+  }}
+>
+  <DynamicForm
+    fields={addDoctorFeild}
+    onSubmit={handleSubmit}
+    initialValues={selectedDoctor ?? undefined}
+    buttonText={selectedDoctor ? "Update Doctor" : "Add Doctor"}
+    headText={selectedDoctor ? "Edit Doctor" : "Add Doctor"}
+  />
+</Modal>
     </div>
   );
 }

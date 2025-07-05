@@ -47,7 +47,7 @@ class DoctorRepo {
         try {
             const query = {
                 text: `
-                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, d.departmentname, hi.hospitalname, h.branchname
+                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, doctor.specialtyid, d.departmentname, doctor.departmentid, hi.hospitalname, h.branchname, doctor.educationhistory, doctor.roomno
                     FROM Doctor 
                     JOIN HospitalBranch h ON Doctor.HospitalBranchID = h.HospitalBranchID
                     JOIN Hospital_Institute hi ON h.HospitalID = hi.HospitalID
@@ -69,7 +69,7 @@ class DoctorRepo {
         try {
             const query = {
                 text: `
-                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, d.departmentname, hi.hospitalname, h.branchname
+                    SELECT doctorid, name as "doctorName", doctor.contactinformation, s.specialtyname, doctor.specialtyid, d.departmentname, doctor.departmentid, hi.hospitalname, h.branchname, doctor.educationhistory, doctor.roomno
                     FROM Doctor 
                     JOIN HospitalBranch h ON Doctor.HospitalBranchID = h.HospitalBranchID
                     JOIN Hospital_Institute hi ON h.HospitalID = hi.HospitalID
@@ -88,7 +88,7 @@ class DoctorRepo {
         try{
             const query = {
                 text: 'INSERT INTO public."doctor" (name, contactinformation, specialtyid, departmentid,hospitalid, hospitalbranchid, educationhistory, roomno) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;',
-                values: [data.name, data.phone_number, data.specialtyid, data.departmentid, data.hospitalid, data.hospitalbranchid, data.educationhistory, data.roomno],
+                values: [data.doctorName, data.contactinformation, data.specialtyid, data.departmentid, data.hospitalid, data.hospitalbranchid, data.educationhistory, data.roomno],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];
@@ -96,6 +96,45 @@ class DoctorRepo {
          console.log(err)
      }
      }
+
+     updateDoctor = async (client:any,data:any) => {
+        try{
+            const query = {
+                text: 'UPDATE public."doctor" SET name = $1, contactinformation = $2, specialtyid = $3, departmentid = $4, educationhistory = $5, roomno = $6 WHERE doctorid = $7 RETURNING *;',
+                values: [data.doctorName, data.contactinformation, data.specialtyid, data.departmentid, data.educationhistory, data.roomno, data.doctorid],
+            };
+         const responseData = await client.query(query);
+         return responseData.rows[0];
+     }catch(err){
+         console.log(err)
+     }
+     }
+
+     deleteDoctor = async (client: any, doctorid: any) => {
+        try {
+          console.log("repo id", doctorid);
+      
+          // Step 1: Detach from User table
+          await client.query({
+            text: 'UPDATE public."User" SET doctor_id = NULL WHERE doctor_id = $1;',
+            values: [doctorid],
+          });
+      
+          // Step 2: Delete from doctor table
+          const query = {
+            text: 'DELETE FROM public."doctor" WHERE doctorid = $1 RETURNING *;',
+            values: [doctorid],
+          };
+      
+          const responseData = await client.query(query);
+          return responseData.rows[0];
+      
+        } catch (err) {
+          console.log("Delete error:", err);
+          throw err;
+        }
+      };
+      
 
      addSchedule = async (client:any,data:any) => {
         try{
@@ -109,6 +148,30 @@ class DoctorRepo {
          console.log(err)
      }
      }
+
+     deleteSchedule = async (client: any, scheduleid: any) => {
+        try {
+      
+          // Step 1: Update all appointments to remove reference
+          await client.query({
+            text: `UPDATE public."appointment" SET scheduleid = NULL WHERE scheduleid = $1;`,
+            values: [scheduleid],
+          });
+      
+          // Step 2: Now delete the schedule
+          const query = {
+            text: `DELETE FROM public."schedule" WHERE scheduleid = $1 RETURNING *;`,
+            values: [scheduleid],
+          };
+      
+          const responseData = await client.query(query);
+          return responseData.rows[0];
+        } catch (err) {
+          console.error("Schedule delete error:", err);
+          throw err;
+        }
+      };
+      
 
      isScheduleExist = async (client: any, data: any): Promise<boolean> => {
         try {

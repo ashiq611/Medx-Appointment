@@ -167,7 +167,7 @@ WHERE u.phone_number = $1;`,
         try{
             const query = {
                 text: 'INSERT INTO public."User" (login_slug, password, role, phone_number, doctor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;',
-                values: [data.phone_number, data.password, RoleNamesEnum.DOCTOR, data.phone_number, data.id],
+                values: [data.contactinformation, data.password, RoleNamesEnum.DOCTOR, data.contactinformation, data.id],
             };
          const responseData = await client.query(query);
          return responseData.rows[0];
