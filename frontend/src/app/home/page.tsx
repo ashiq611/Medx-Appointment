@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { withAuth } from "@/hoc/withAuth";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -64,6 +65,7 @@ function DashboardPage() {
       </div>
 
       <div className="flex flex-col items-center justify-center flex-grow p-6">
+      <Button>Click me</Button>
         <motion.h1
           className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6 text-center"
           initial={{ opacity: 0, y: 30 }}

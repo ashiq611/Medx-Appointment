@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { setFieldValue } from '@/store/services/slices/formSlice';
-import { RootState } from '@/store/store';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { setFieldValue } from "@/store/services/slices/formSlice";
+import { RootState } from "@/store/store";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 
 interface Field {
   name: string;
@@ -11,7 +17,7 @@ interface Field {
   type: string;
   placeholder?: string;
   required?: boolean;
-  options?: { label: string; value: string }[]; 
+  options?: { label: string; value: string }[];
 }
 
 interface DynamicFormProps {
@@ -22,14 +28,20 @@ interface DynamicFormProps {
   initialValues?: { [key: string]: any };
 }
 
-const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText, headText = "Login Page", initialValues}) => {
+const DynamicForm: React.FC<DynamicFormProps> = ({
+  fields,
+  onSubmit,
+  buttonText,
+  headText = "Login Page",
+  initialValues,
+}) => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (name: string, value: any) => {
     dispatch(setFieldValue({ key: name, value }));
-    setErrors((prev) => ({ ...prev, [name]: '' }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,58 +55,70 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText,
     });
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) return;
 
     onSubmit(formState);
   };
 
   const renderField = (field: Field) => {
-    const commonProps = {
-      id: field.name,
-      name: field.name,
-      value: formState[field.name] || '',
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-        handleChange(field.name, e.target.value),
-      placeholder: field.placeholder,
-      className: `border-2 rounded-lg p-3 focus:outline-none focus:ring-2 w-full text-black ${
-        errors[field.name] ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-      }`,
-    };
+    const value = formState[field.name] || "";
 
     switch (field.type) {
-      case 'text':
-        return <textarea rows={4} {...commonProps} />;
-      case 'select':
+      case "text":
         return (
-          <select {...commonProps}>
-            <option value="">Select {field.label}</option>
-            {field.options?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          <Textarea
+            id={field.name}
+            placeholder={field.placeholder}
+            value={value}
+            onChange={(e) => handleChange(field.name, e.target.value)}
+          />
         );
-      case 'radio':
+
+      case "select":
         return (
-          <div className="flex gap-4">
-            {field.options?.map((opt) => (
-              <label key={opt.value} className="flex items-center gap-1">
-                <input
-                  type="radio"
-                  name={field.name}
-                  value={opt.value}
-                  checked={formState[field.name] === opt.value}
-                  onChange={(e) => handleChange(field.name, e.target.value)}
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
+          <Select
+            onValueChange={(val) => handleChange(field.name, val)}
+            value={value}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={`Select ${field.label}`} />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
+
+      case "radio":
+        return (
+          <RadioGroup
+            value={value}
+            onValueChange={(val) => handleChange(field.name, val)}
+            className="flex gap-6"
+          >
+            {field.options?.map((opt) => (
+              <div key={opt.value} className="flex items-center gap-2">
+                <RadioGroupItem value={opt.value} id={`${field.name}-${opt.value}`} />
+                <Label htmlFor={`${field.name}-${opt.value}`}>{opt.label}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        );
+
       default:
-        return <input type={field.type} {...commonProps} />;
+        return (
+          <Input
+            type={field.type}
+            id={field.name}
+            placeholder={field.placeholder}
+            value={value}
+            onChange={(e) => handleChange(field.name, e.target.value)}
+          />
+        );
     }
   };
 
@@ -114,24 +138,28 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ fields, onSubmit, buttonText,
       <h2 className="text-2xl font-semibold text-center text-blue-600">{headText}</h2>
 
       {fields.map((field) => (
-        <div key={field.name} className="flex flex-col space-y-2 ">
-          <label htmlFor={field.name} className="text-sm font-medium text-gray-700">
+        <div key={field.name} className="space-y-2">
+          <Label htmlFor={field.name}>
             {field.label} {field.required && <span className="text-red-500">*</span>}
-          </label>
+          </Label>
+
           {renderField(field)}
-          {field.name === 'phoneNumber' && (
-            <p className="text-sm text-gray-500">Format: 018XXXXXXXX ; Don't use +88</p>
+
+          {field.name === "phoneNumber" && (
+            <p className="text-sm text-muted-foreground">
+              Format: 018XXXXXXXX ; Don't use +88
+            </p>
           )}
-          {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
+
+          {errors[field.name] && (
+            <p className="text-sm text-red-500">{errors[field.name]}</p>
+          )}
         </div>
       ))}
 
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
+      <Button type="submit" className="w-full">
         {buttonText}
-      </button>
+      </Button>
     </form>
   );
 };
