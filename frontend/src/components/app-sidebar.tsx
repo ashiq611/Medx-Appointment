@@ -52,7 +52,7 @@ const data = {
     },
     {
       title: "Add User",
-      url: "#",
+      url: "/home/create/user",
       icon: IconUsers,
     },
   ],

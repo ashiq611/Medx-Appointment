@@ -167,12 +167,20 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
      
 
       </div>
+      <div>
+
+      <div>
+
+
       <h2 className="text-2xl font-bold mb-2 text-teal-800">{doctor.doctorName}</h2>
       <p className="text-gray-600 mb-1">Specialty: {doctor.specialtyname}</p>
       <p className="text-gray-600 mb-1">Department: {doctor.departmentname}</p>
       <p className="text-gray-600 mb-1">Branch: {doctor.branchname}</p>
       <p className="text-gray-600 mb-4">Contact: {doctor.contactinformation}</p>
       <hr className="my-4" />
+      </div>
+      <div>
+
 
       <button onClick={() => handleClick(id)} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">See Appointment List</button>
     {(user?.role === "Receptionist" || user?.role === "Admin") && (
@@ -185,7 +193,7 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
           onChange={(e) => setPatientName(e.target.value)}
           placeholder="Enter Patient Name"
           className="border rounded-lg px-3 py-2 mb-4 w-full text-black"
-        />
+          />
 
         {/* Patient Phone Number Input */}
         <h3 className="text-lg font-semibold mb-2 text-black">Phone Number</h3>
@@ -215,20 +223,24 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
                 setSelectedSchedule(schedule);
                 setSelectedDate(date);
               }}
-            >
+              >
               <p><strong>Date:</strong> {date}</p>
               <p><strong>Day:</strong> {schedule.day}</p>
               <p><strong>Time:</strong> {schedule.startslot} - {schedule.endslot}</p>
-              <button
-  className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
-  onClick={(e) => {
-    e.stopPropagation(); // Prevent selecting schedule
-    setScheduleToDelete(schedule.scheduleid);
-    setDeleteConfirmModal(true);
-  }}
->
-  Delete
-</button>
+              {
+                RoleNamesEnum.ADMIN === user?.role &&(
+                  <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setScheduleToDelete(schedule);
+                    setDeleteConfirmModal(true);
+                  }}
+                  className="px-4 py-1 bg-red-600 text-white rounded-xl shadow hover:bg-red-700"
+                >
+                  Delete
+                </button>
+                )
+              }
             </motion.div>
           ))
         )}
@@ -237,7 +249,7 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
         <button
           onClick={handleBooking}
           className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-        >
+          >
           Book Appointment
         </button>
 
@@ -245,6 +257,8 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
         {message && <p className="mt-4 text-center text-green-700">{message}</p>}
       </>
     )}
+    </div>
+    </div>
 
 <Modal isOpen={deleteConfirmModal} onClose={() => setDeleteConfirmModal(false)}>
   <div className="p-4">

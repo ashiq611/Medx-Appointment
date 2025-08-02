@@ -118,7 +118,9 @@ function BranchList() {
             <p className="text-gray-700">🏥 {branch.hospitalname}</p>
             <p className="text-gray-600 mt-1">📍 {branch.location}</p>
             <p className="text-gray-600 mt-1">📞 {branch.contactinformation}</p>
-            <div className="flex justify-between mt-4">
+            {
+              RoleNamesEnum.ADMIN === user?.role && (
+                <div className="flex justify-between mt-4">
               <Button
                 variant="secondary"
                 onClick={(e) => {
@@ -136,6 +138,8 @@ function BranchList() {
                 Delete
               </Button>
             </div>
+              )
+            }
           </motion.div>
         ))}
       </div>

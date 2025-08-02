@@ -110,28 +110,32 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
           <p className="text-sm italic text-gray-600">
             {doctor.departmentname}, {doctor.hospitalname} ({doctor.branchname})
           </p>
-          <div className="flex justify-between mt-4">
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      setSelectedDoctor(doctor);
-      setIsModalOpen(true);
-    }}
-    className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded"
-  >
-    Edit
-  </button>
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      setDeleteTargetId(doctor.doctorid);
-      setDeleteModalOpen(true);
-    }}
-    className="ml-2 bg-red-500 text-white px-3 py-1 rounded"
-  >
-    Delete
-  </button>
-</div>
+          {
+            RoleNamesEnum.ADMIN === user?.role && (
+              <div className="flex justify-between mt-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDoctor(doctor);
+                  setIsModalOpen(true);
+                }}
+                className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteTargetId(doctor.doctorid);
+                  setDeleteModalOpen(true);
+                }}
+                className="ml-2 bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Delete
+              </button>
+            </div>
+            )
+          }
         </motion.div>
       ))}
     </div>
