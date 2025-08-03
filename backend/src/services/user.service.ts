@@ -108,6 +108,17 @@ class UserService {
       client.release();
     }
   }
+  async getAppointmentList(patientid: any) {
+    const client = await pool.connect();
+    try {
+      const result = await userRepo.getAppointmentList(client, patientid);
+      return result;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      client.release();
+    }
+  }
 }
 
 export default new UserService();

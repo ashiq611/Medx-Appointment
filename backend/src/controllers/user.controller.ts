@@ -189,6 +189,38 @@ class UserController {
         }
     }
 
+    getAppointmentList: RequestHandler = async (req,res) => {
+        const { patientid } = req.params;
+        try {
+            const result = await userService.getAppointmentList(patientid)
+
+            logger.requestLogger({method: req.method, data: result, message: "Get Appointment List", traceId: result.traceId})
+            res.status(201).json({
+                success: true,
+                data: result
+            })
+        } catch (err) {
+
+            const safeError = {
+                name: (err as Error).name,
+                message: (err as Error).message,
+                stack: (err as Error).stack,
+            }
+
+             logger.errorLogger({
+                       method: req.method,
+                       message: "getAppointmentList failed",
+                       data: safeError,
+                       traceId: Date.now().toString(),
+                   });
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            })
+        }
+    }
+
 
 }
 

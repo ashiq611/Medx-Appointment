@@ -1,14 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 import { useLogoutMutation } from "@/store/services/api/authApi";
 import { UserloggedOut } from "@/store/services/slices/authSlice";
-import { toast } from "react-toastify";
 import { RoleNamesEnum } from "../constant/formFeilds";
+import { li } from "framer-motion/client";
 
+/**
+ * Expects `state.auth.user` like:
+ * {
+ *   id: string;
+ *   name: string;
+ *   email: string;
+ *   role: RoleNamesEnum;
+ *   avatarUrl?: string; // optional profile image url
+ * }
+ */
 export default function DashboardLayout({
   children,
 }: {
@@ -16,10 +30,16 @@ export default function DashboardLayout({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  const profileBtnRef = useRef<HTMLButtonElement | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+
   const router = useRouter();
-  const { user } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
-  const [logout] = useLogoutMutation();
+
+  const { user } = useSelector((state: any) => state.auth);
+
+  const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
 
   const handleNavigate = (path: string) => {
     router.push(path);
@@ -29,16 +49,50 @@ export default function DashboardLayout({
 
   const handleLogout = async () => {
     try {
-      const result = await logout();
-      if (result) {
-        dispatch(UserloggedOut());
-        router.push("/login");
-        toast.success("Logout successful");
-      }
-    } catch (error) {
+      await logout(undefined).unwrap?.(); // RTK Query style (noop if not available)
+      dispatch(UserloggedOut());
+      router.push("/login");
+      toast.success("Logout successful");
+    } catch (error: any) {
       console.error("Logout error:", error);
+      toast.error(error?.data?.message || "Failed to log out");
     }
   };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        profileMenuOpen &&
+        profileMenuRef.current &&
+        profileBtnRef.current &&
+        !profileMenuRef.current.contains(target) &&
+        !profileBtnRef.current.contains(target)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    }
+
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setProfileMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [profileMenuOpen]);
+
+  const displayName = user?.name || user?.fullName || "User";
+  const email = user?.email || "";
+  const avatarUrl =
+    user?.avatarUrl || "/next.svg"; // place a default in /public/images
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 flex flex-col relative">
@@ -46,8 +100,9 @@ export default function DashboardLayout({
       <div className="flex justify-between items-center p-4 shadow bg-white relative">
         {/* Left: Menu button */}
         <button
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setMenuOpen((v) => !v)}
           className="p-2 bg-blue-600 text-white rounded-full"
+          aria-label="Open menu"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -57,11 +112,7 @@ export default function DashboardLayout({
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 6h16M4 12h16m-7 6h7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
           </svg>
         </button>
 
@@ -70,45 +121,93 @@ export default function DashboardLayout({
           {process.env.NEXT_PUBLIC_COMPANY_NAME}
         </h1>
 
-        {/* Right: Profile Icon */}
+        {/* Right: Profile */}
         <div className="relative">
           <button
-            onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-            className="p-2 bg-red-600 text-white rounded-full font-extrabold"
+            ref={profileBtnRef}
+            onClick={() => setProfileMenuOpen((v) => !v)}
+            className="flex items-center gap-2 text-sm bg-gray-100 rounded-full focus:ring-4 focus:ring-gray-300 px-2 py-1"
+            aria-haspopup="menu"
+            aria-expanded={profileMenuOpen}
           >
-            🚑
+            <Image
+              src={avatarUrl}
+              alt="user avatar"
+              width={32}
+              height={32}
+              className="rounded-full"
+            />
+            <span className="hidden sm:block font-medium text-gray-900">{displayName}</span>
           </button>
 
           <AnimatePresence>
             {profileMenuOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                ref={profileMenuRef}
+                initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-xl p-4 z-50"
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.12 }}
+                role="menu"
+                aria-label="User menu"
+                className="absolute right-0 mt-2 z-50 w-56 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
               >
-                <h3 className="font-bold text-lg text-blue-700 mb-2">
-                  👤 Profile
-                </h3>
-                <div className="text-sm text-gray-700 space-y-1 mb-4">
-                  <p>
-                    <span className="font-semibold">Name:</span> {user?.name}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Phone:</span>{" "}
-                    {user?.phone_number}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Role:</span> {user?.role}
-                  </p>
+                <div className="px-4 py-3 text-sm text-gray-900">
+                  <div className="font-semibold truncate" title={displayName}>
+                    {displayName}
+                  </div>
+                  {email && (
+                    <div className="truncate text-gray-500" title={email}>
+                      {email}
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full bg-red-500 text-white py-2 rounded-xl hover:bg-red-600"
-                >
-                  Logout
-                </button>
+                <div className="h-px bg-gray-100" />
+                <ul className="py-1 text-sm text-gray-700" role="none">
+                  <li>
+                    <Link
+                      href="/home"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/settings/profile"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Settings
+                    </Link>
+                  </li>
+                  {user?.role === RoleNamesEnum.ADMIN && (
+                    <li>
+                      <Link
+                        href="/billing"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-gray-100"
+                        role="menuitem"
+                      >
+                        Billing
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+                <div className="h-px bg-gray-100" />
+                <div className="py-1">
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-60"
+                    role="menuitem"
+                  >
+                    {isLoggingOut ? "Signing out…" : "Sign out"}
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -129,13 +228,13 @@ export default function DashboardLayout({
             onClick={() => setMenuOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.8 }}
+              initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
+              exit={{ scale: 0.9 }}
               className="relative bg-white rounded-2xl shadow-lg p-6 w-[90%] max-w-md"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button (Top Right with ✖ icon) */}
+              {/* Close Button */}
               <button
                 onClick={() => setMenuOpen(false)}
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
@@ -147,15 +246,14 @@ export default function DashboardLayout({
               <h2 className="text-lg font-bold mb-6 text-center text-teal-800">Menu</h2>
 
               {/* Grid Menu */}
-              <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 place-items-center">
                 <li>
                   <button
                     onClick={() => handleNavigate("/home")}
                     className="w-32 h-32 bg-red-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-red-700 flex flex-col items-center justify-center transition-all duration-300"
                   >
-                    🏠
-                    <br />
-                    Home
+                    <span className="text-2xl">🏠</span>
+                    <span className="mt-2">Home</span>
                   </button>
                 </li>
 
@@ -165,9 +263,8 @@ export default function DashboardLayout({
                       onClick={() => handleNavigate("/home/branches")}
                       className="w-32 h-32 bg-yellow-500 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-yellow-600 flex flex-col items-center justify-center transition-all duration-300"
                     >
-                      🏥
-                      <br />
-                      Branches
+                      <span className="text-2xl">🏥</span>
+                      <span className="mt-2">Branches</span>
                     </button>
                   </li>
                 )}
@@ -179,25 +276,35 @@ export default function DashboardLayout({
                         onClick={() => handleNavigate("/home/create/user")}
                         className="w-32 h-32 bg-blue-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-blue-700 flex flex-col items-center justify-center transition-all duration-300"
                       >
-                        🧑‍⚕️
-                        <br />
-                        Add User
+                        <span className="text-2xl">🧑‍⚕️</span>
+                        <span className="mt-2">Add User</span>
                       </button>
                     </li>
                     <li>
                       <button
-                        onClick={() =>
-                          handleNavigate("/home/create/properties")
-                        }
+                        onClick={() => handleNavigate("/home/create/properties")}
                         className="w-32 h-32 bg-green-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-green-700 flex flex-col items-center justify-center transition-all duration-300"
                       >
-                        🏠
-                        <br />
-                        Management
+                        <span className="text-2xl">🏠</span>
+                        <span className="mt-2">Management</span>
                       </button>
                     </li>
                   </>
                 )}
+                {
+                  user.role === RoleNamesEnum.PATIENT && (
+                    <li>
+                      <button
+                        onClick={() => handleNavigate("/home/patient")}
+                        className="w-32 h-32 bg-green-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-green-700 flex flex-col items-center justify-center transition-all duration-300"
+                      >
+                        <span className="text-2xl">🏠</span>
+                        <span className="mt-2">Booked Appointment</span>
+                      </button>
+                    </li>
+                    
+                  )
+                }
               </ul>
             </motion.div>
           </motion.div>

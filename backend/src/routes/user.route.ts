@@ -52,4 +52,6 @@ router.get('/get-branch-wise-doctor/:branchid',isAuthenticated, expressAsyncHand
 
 router.get('/doctor-details/:doctorid',isAuthenticated, expressAsyncHandler(userController.getDoctorDetails));
 
+router.get('/get-appointment-list/:patientid',isAuthenticated, expressAsyncHandler(userController.getAppointmentList));
+
 export default router;
