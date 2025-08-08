@@ -1,5 +1,5 @@
 export const isAuthenticated = (req: any, res: any, next: any) => {
-        if (req.isAuthenticated()) {
+        if (req.isAuthenticated) {
             console.log("User is authenticated", req.user);
             next();
         } else {
