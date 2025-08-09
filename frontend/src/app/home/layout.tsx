@@ -12,6 +12,9 @@ import { useLogoutMutation } from "@/store/services/api/authApi";
 import { UserloggedOut } from "@/store/services/slices/authSlice";
 import { RoleNamesEnum } from "../constant/formFeilds";
 import { li } from "framer-motion/client";
+import { FaHome, FaUserMd } from "react-icons/fa";
+import { MdManageAccounts } from "react-icons/md";
+import { BsHospitalFill } from "react-icons/bs";
 
 /**
  * Expects `state.auth.user` like:
@@ -130,14 +133,7 @@ export default function DashboardLayout({
             aria-haspopup="menu"
             aria-expanded={profileMenuOpen}
           >
-            <Image
-              src={avatarUrl}
-              alt="user avatar"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <span className="hidden sm:block font-medium text-gray-900">{displayName}</span>
+            <Image className="w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" width={40} height={40} src={avatarUrl} alt="Bordered avatar"/>
           </button>
 
           <AnimatePresence>
@@ -166,7 +162,7 @@ export default function DashboardLayout({
                 <ul className="py-1 text-sm text-gray-700" role="none">
                   <li>
                     <Link
-                      href="/home"
+                      href="/home/dashboard"
                       onClick={() => setProfileMenuOpen(false)}
                       className="block px-4 py-2 hover:bg-gray-100"
                       role="menuitem"
@@ -246,13 +242,13 @@ export default function DashboardLayout({
               <h2 className="text-lg font-bold mb-6 text-center text-teal-800">Menu</h2>
 
               {/* Grid Menu */}
-              <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 place-items-center">
+              <ul className="grid grid-cols-2 gap-4 place-items-center">
                 <li>
                   <button
                     onClick={() => handleNavigate("/home")}
-                    className="w-32 h-32 bg-red-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-red-700 flex flex-col items-center justify-center transition-all duration-300"
+                    className="w-32 h-32 bg-red-100 text-red-800 text-xs font-bold p-0.5 rounded-lg dark:bg-gray-700 dark:text-red-400 border border-red-400 hover:bg-red-200 flex flex-col items-center justify-center transition-all duration-300"
                   >
-                    <span className="text-2xl">🏠</span>
+                    <span className="text-2xl"><FaHome /> </span>
                     <span className="mt-2">Home</span>
                   </button>
                 </li>
@@ -261,9 +257,9 @@ export default function DashboardLayout({
                   <li>
                     <button
                       onClick={() => handleNavigate("/home/branches")}
-                      className="w-32 h-32 bg-yellow-500 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-yellow-600 flex flex-col items-center justify-center transition-all duration-300"
+                      className="w-32 h-32 bg-green-100 text-green-800 text-xs font-bold p-0.5 rounded-lg dark:bg-gray-700 dark:text-green-400 border border-green-400 hover:bg-green-200 flex flex-col items-center justify-center transition-all duration-300"
                     >
-                      <span className="text-2xl">🏥</span>
+                      <span className="text-2xl"><BsHospitalFill /></span>
                       <span className="mt-2">Branches</span>
                     </button>
                   </li>
@@ -274,18 +270,18 @@ export default function DashboardLayout({
                     <li>
                       <button
                         onClick={() => handleNavigate("/home/create/user")}
-                        className="w-32 h-32 bg-blue-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-blue-700 flex flex-col items-center justify-center transition-all duration-300"
+                        className="w-32 h-32 bg-purple-100 text-purple-800 text-xs font-bold p-0.5 rounded-lg dark:bg-gray-700 dark:text-purple-400 border border-purple-400 hover:bg-purple-200 flex flex-col items-center justify-center transition-all duration-300"
                       >
-                        <span className="text-2xl">🧑‍⚕️</span>
+                        <span className="text-2xl"><FaUserMd /></span>
                         <span className="mt-2">Add User</span>
                       </button>
                     </li>
                     <li>
                       <button
                         onClick={() => handleNavigate("/home/create/properties")}
-                        className="w-32 h-32 bg-green-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-green-700 flex flex-col items-center justify-center transition-all duration-300"
+                        className="w-32 h-32 bg-indigo-100 text-indigo-800 text-xs font-bold  p-0.5 rounded-lg dark:bg-gray-700 dark:text-indigo-400 border border-indigo-400 hover:bg-indigo-200 flex flex-col items-center justify-center transition-all duration-300"
                       >
-                        <span className="text-2xl">🏠</span>
+                        <span className="text-2xl"><MdManageAccounts /></span>
                         <span className="mt-2">Management</span>
                       </button>
                     </li>
@@ -296,7 +292,7 @@ export default function DashboardLayout({
                     <li>
                       <button
                         onClick={() => handleNavigate("/home/patient")}
-                        className="w-32 h-32 bg-green-600 text-white text-base font-semibold rounded-2xl shadow-lg hover:bg-green-700 flex flex-col items-center justify-center transition-all duration-300"
+                        className="w-32 h-32 bg-yellow-100 text-yellow-800 text-xs font-bold me-2 p-0.5 rounded-lg dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300 flex flex-col items-center justify-center transition-all duration-300"
                       >
                         <span className="text-2xl">🏠</span>
                         <span className="mt-2">Booked Appointment</span>

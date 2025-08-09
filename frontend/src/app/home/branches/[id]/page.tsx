@@ -14,6 +14,8 @@ import { generateDoctorFields, RoleNamesEnum } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 import { withAuth } from '@/hoc/withAuth';
 import { resetForm } from '@/store/services/slices/formSlice';
+import { TbUserEdit } from 'react-icons/tb';
+import { RiDeleteBin6Fill } from 'react-icons/ri';
 
 
 type SpecilityDepartmentResponse = {
@@ -110,28 +112,32 @@ const addDoctorFeild = speciality && department ? generateDoctorFields(specialit
           <p className="text-sm italic text-gray-600">
             {doctor.departmentname}, {doctor.hospitalname} ({doctor.branchname})
           </p>
-          <div className="flex justify-between mt-4">
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      setSelectedDoctor(doctor);
-      setIsModalOpen(true);
-    }}
-    className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded"
-  >
-    Edit
-  </button>
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      setDeleteTargetId(doctor.doctorid);
-      setDeleteModalOpen(true);
-    }}
-    className="ml-2 bg-red-500 text-white px-3 py-1 rounded"
-  >
-    Delete
-  </button>
-</div>
+          {
+            RoleNamesEnum.ADMIN === user?.role && (
+              <div className="flex justify-between mt-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDoctor(doctor);
+                  setIsModalOpen(true);
+                }}
+                className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+              >
+                <TbUserEdit />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteTargetId(doctor.doctorid);
+                  setDeleteModalOpen(true);
+                }}
+                className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                <RiDeleteBin6Fill />
+              </button>
+            </div>
+            )
+          }
         </motion.div>
       ))}
     </div>

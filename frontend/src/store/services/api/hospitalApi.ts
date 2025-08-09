@@ -108,8 +108,16 @@ export const hospitalApi = Api.injectEndpoints({
       }),
       transformResponse: (response: any) => response.data,
       providesTags: ["Appointment"],
+    }),
+    getDashboard: builder.query<any[], void>({
+      query: () => ({
+        url: "/admin/dashboard",
+        method: "GET",
+        credentials: "include",
+      }),
+      transformResponse: (response: any) => response.data
     })
   }),
 });
 
-export const { useGetBranchesQuery, useAddBranchMutation, useUpdateBranchMutation, useDeleteBranchMutation, useGetSpecilityDepartmentQuery, useAddUserMutation, useGetUserQuery, useAddDepartmentMutation, useAddSpecialityMutation, useGetAppointmentListByPatientIdQuery } = hospitalApi;
+export const { useGetBranchesQuery, useAddBranchMutation, useUpdateBranchMutation, useDeleteBranchMutation, useGetSpecilityDepartmentQuery, useAddUserMutation, useGetUserQuery, useAddDepartmentMutation, useAddSpecialityMutation, useGetAppointmentListByPatientIdQuery, useGetDashboardQuery } = hospitalApi;

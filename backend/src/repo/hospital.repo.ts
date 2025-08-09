@@ -173,6 +173,32 @@ class HospitalRepo {
         }
       }
 
+      async getTotalDepartment(client: any) {
+        try {
+            const query = {
+                text: "SELECT COUNT(*) FROM department",
+            };
+            const responseData = await client.query(query);
+            return responseData.rows[0].count;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getTotalBranch(client: any) {
+        try {
+            const query = {
+                text: "SELECT COUNT(*) FROM HospitalBranch",
+            };
+            const responseData = await client.query(query);
+            return responseData.rows[0].count;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+      
+
 }
 
 export default new HospitalRepo();

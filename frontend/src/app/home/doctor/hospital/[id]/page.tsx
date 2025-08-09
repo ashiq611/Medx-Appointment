@@ -15,6 +15,7 @@ import DynamicForm from '@/components/DynamicForm';
 import { RoleNamesEnum, scheduleFeilds } from '@/app/constant/formFeilds';
 import { toast } from 'react-toastify';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { RiDeleteBin6Fill } from 'react-icons/ri';
 
 function DoctorProfilePage() {
   const { id } = useParams();
@@ -220,14 +221,14 @@ const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
               <p><strong>Day:</strong> {schedule.day}</p>
               <p><strong>Time:</strong> {schedule.startslot} - {schedule.endslot}</p>
               <button
-  className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
+  className="mt-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
   onClick={(e) => {
     e.stopPropagation(); // Prevent selecting schedule
     setScheduleToDelete(schedule.scheduleid);
     setDeleteConfirmModal(true);
   }}
 >
-  Delete
+  <RiDeleteBin6Fill />
 </button>
             </motion.div>
           ))

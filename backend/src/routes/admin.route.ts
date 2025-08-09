@@ -29,6 +29,7 @@ router.post('/add-schedule', expressAsyncHandler(adminController.addSchedule));
 router.delete('/delete-schedule/:scheduleid', expressAsyncHandler(adminController.deleteSchedule));
 router.post('/add-user', expressAsyncHandler(adminController.addUser));
 router.get('/get-all-admin-reception', expressAsyncHandler(adminController.getAllAdminReception));
+router.get('/dashboard', expressAsyncHandler(adminController.getDashboard));
 
 
 

@@ -362,6 +362,32 @@ class AdminService {
             client.release();
         }
     }
+
+    getDashboard = async () => {
+        const client = await pool.connect();
+        try {
+            const totalDcotor = await doctorRepo.getTotalDoctors(client);
+            const totalDepartment = await hospitalRepo.getTotalDepartment(client);
+            const totalBranch = await hospitalRepo.getTotalBranch(client);
+
+            const TotaldayWiseAppointment = await doctorRepo.getTotalDayWiseAppointment(client);
+
+            const TotalBranchWiseDoctor = await doctorRepo.getTotalBranchWiseDoctor(client);
+
+            return {
+                totalDcotor,
+                totalDepartment,
+                totalBranch,
+                TotaldayWiseAppointment,
+                TotalBranchWiseDoctor
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        finally {
+            client.release();
+        }
+    }
   
 }
 

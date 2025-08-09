@@ -11,6 +11,8 @@ import { resetForm } from "@/store/services/slices/formSlice";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { RiDeleteBin6Fill } from "react-icons/ri";
+import { TbUserEdit } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -103,34 +105,37 @@ const [deleteBranch] = useDeleteBranchMutation();
         {branches?.map((branch, i) => (
           <motion.div
             key={branch.hospitalbranchid}
-            className="rounded-xl shadow-md bg-white p-6 border hover:shadow-lg transition"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            className="rounded-xl cursor-pointer shadow-md bg-white p-6 hover:shadow-lg transition"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => handleClick(branch.hospitalbranchid)}
           >
             <h2 className="text-xl font-semibold text-teal-800">{branch.branchname}</h2>
             <p className="text-gray-700">🏥 {branch.hospitalname}</p>
             <p className="text-gray-600 mt-1">📍 {branch.location}</p>
             <p className="text-gray-600 mt-1">📞 {branch.contactinformation}</p>
-            <div className="flex justify-between mt-4">
-            <button
-  onClick={(e) => {
-    e.stopPropagation(); // ✅ stop box click
-    setSelectedBranch(branch);
-    setIsModalOpen(true);
-  }}
-  className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded"
->
-  Edit
-</button>
-<button
-  className="ml-2 bg-red-500 text-white px-3 py-1 rounded"
-  onClick={(e) => openDeleteModal(e, branch.hospitalbranchid)}
->
-  Delete
-</button>
-            </div>
+            {
+              RoleNamesEnum.ADMIN === user?.role && (
+                <div className="flex justify-between mt-4">
+                <button
+      onClick={(e) => {
+        e.stopPropagation(); // stop box click
+        setSelectedBranch(branch);
+        setIsModalOpen(true);
+      }}
+      className="mr-2 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+    >
+      <TbUserEdit />
+    </button>
+    <button
+      className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+      onClick={(e) => openDeleteModal(e, branch.hospitalbranchid)}
+    >
+      <RiDeleteBin6Fill />
+    </button>
+                </div>
+              )
+            }
           </motion.div>
         ))}
       </div>
